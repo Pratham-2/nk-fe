@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<!-- <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />  -->
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="theme-color" content="#000000" />
+		<meta name="NK Mangalam" content="A Website for users to simplify the events resource search" />
+
+		<link rel="apple-touch-icon" sizes="180x180" href="%PUBLIC_URL%/favicon/apple-touch-icon.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="%PUBLIC_URL%/favicon/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="%PUBLIC_URL%/favicon/favicon-16x16.png">
+		<link rel="manifest" href="%PUBLIC_URL%/css/favicon/site.webmanifest">
+		<!--
+		manifest.json provides metadata used when your web app is installed on a
+		user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
+		-->
+		<link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
+	
+		<title> NK Mangalam </title>
+
+		<!--begin::Fonts-->
+		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" />
+		<!--end::Fonts-->
+		
+		<!--begin::Page Vendor Stylesheets(used by this page)-->
+		<link href="%PUBLIC_URL%/css/datatables.bundle.css" rel="stylesheet" type="text/css" />
+		<!--end::Page Vendor Stylesheets-->
+		<!--begin::Global Stylesheets Bundle(used by all pages)-->
+		<link href="%PUBLIC_URL%/css/plugins.bundle.css" rel="stylesheet" type="text/css" />
+		<link href="%PUBLIC_URL%/css/style.bundle.css" rel="stylesheet" type="text/css" />
+		<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" rel="stylesheet" type="text/css" />
+		<!--end::Global Stylesheets Bundle-->
+		<link href="%PUBLIC_URL%/css/custom.css" rel="stylesheet" type="text/css" />
+	
+
+
+	</head>
+	<!-- <body id="kt_body" style="background-image: url(%PUBLIC_URL%/images/light.jpg); background-size: cover;" class="header-fixed header-tablet-and-mobile-fixed toolbar-enabled"> -->
+		
+	<body id="kt_body" class="header-fixed header-tablet-and-mobile-fixed aside-fixed aside-secondary-disabled">
+		<noscript>You need to enable JavaScript to run this app.</noscript>
+		<div id="root"  class='d-flex flex-column flex-root'></div>
+		
+
+		<!--begin::Javascript-->
+			
+		<!--begin::Global Javascript Bundle(used by all pages)-->
+		<script src="%PUBLIC_URL%/js/plugins.bundle.js"></script>
+		<script src="%PUBLIC_URL%/js/scripts.bundle.js"></script>
+		<!--end::Global Javascript Bundle-->
+		<!--begin::Page Vendors Javascript(used by this page)-->
+
+		<script src="%PUBLIC_URL%/js/datatables.bundle.js"></script>
+		<!--end::Page Vendors Javascript-->
+		<!--begin::Page Custom Javascript(used by this page)-->
+		<script src="%PUBLIC_URL%/js/widgets.js"></script>
+		<script src="%PUBLIC_URL%/js/users-search.js"></script>
+		<!--end::Page Custom Javascript-->
+
+		<!-- <script src="http://translate.google.com/translate_a/element.js?cb=loadGoogleTranslate"></script> -->
+		<script src="https://translate.google.com/translate_a/element.js?cb=loadGoogleTranslate"></script>
+		<script>
+		  function loadGoogleTranslate(){
+			new google.translate.TranslateElement({
+			  pageLanguage		: 'en',
+			  autoDisplay		: false,
+			  multilanguagePage	: false,
+			  includedLanguages : 'en,mr',
+			  layout			: google.translate.TranslateElement.InlineLayout.HORIZONTAL
+			}, 'root');
+		  }	  
+		</script>
+
+		<!--end::Javascript-->
+	
+	</body>
+</html>

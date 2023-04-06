@@ -1,0 +1,44 @@
+.drop-zone {
+    margin-top: 20px;
+    margin-bottom: 30px;
+    margin-right: 10%;
+    margin-left: 10%;
+    max-width: 80%;
+    height: 180px;
+    padding: 20px;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    cursor: pointer;
+    /* color: #9a9797; */
+    border: 2px dashed #1a73e9;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .dropzone-msg-title {
+    color: #595d6e;
+    margin: 0 0 5px 0;
+    padding: 0;
+    font-weight: 500;
+    font-size: 1.2rem;
+  }
+  
+  .dropzone-msg-desc {
+    color: #74788d;
+    font-weight: 400;
+    font-size: 1rem;
+  }
+  
+  #drop-zone-icon {
+    height: 40px;
+    width: 40px;  
+    margin-bottom: 10px;
+  }
+  
+  /* .drop-zone.file-on,
+  .drop-zone:hover {
+    color: #595d6e;
+  } */
+  
