@@ -46,31 +46,31 @@ const HostAdmin = () => {
                     <Route  path='/host/quotes/:typeofQuote'>
                         <QuotePage />
                     </Route>
-                    <Route exact path='/host/venues/:typeOfVenue'>
+                    <Route exact path='/host/venues'>
                         <Venues />
                     </Route>
-                    <Route exact path='/host/caterers/:typeOfCaterer'>
+                    <Route exact path='/host/caterers'>
                         <Caterers />
                     </Route>
-                    <Route exact path='/host/photographer/:typeOfPhotographer'>
+                    <Route exact path='/host/photographer'>
                         <Photographers />
                     </Route>
-                    <Route exact path='/host/decorators/:typeOfDecorator'>
+                    <Route exact path='/host/decorators'>
                         <Decorators />
                     </Route>
-                    <Route exact path='/host/beauticians/:tab'>
+                    <Route exact path='/host/beauticians'>
                         <BeauticianHost />
                     </Route>
-                    <Route exact path='/host/mehndi-artist/:tab'>
+                    <Route exact path='/host/mehndi-artist'>
                         <MendiArtistHost />
                     </Route>
-                    <Route exact path='/host/musicians/:tab'>
+                    <Route exact path='/host/musicians'>
                         <MusicianHost />
                     </Route>
                     <Route  path='/host/profile'>
                         <HostProfile />
                     </Route>
-                    <Redirect to="/host/venues/all" />
+                    <Redirect to="/host/venues" />
                 </Switch>
             </div>
         </>

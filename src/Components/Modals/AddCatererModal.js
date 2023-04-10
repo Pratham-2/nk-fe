@@ -14,25 +14,27 @@ import ImageCropper from "../Global/ImageCropper";
 
 const AddCatererModal = (props) => {
 
+    const menues = [ { ID : '1', Name : 'Veg' }, { ID : '2', Name : 'Non-Veg'}];
+
     const [cropperData,         setCropperData]      = useState(null);
-    const [venueBlobs,          setVenueBlobs]       = useState([]);
+    const [imgBlobs,          setImgBlobs]       = useState([]);
     const [editImageCropper,    setEditImageCropper] = useState(null);
     const [deletedImages,       setDeletedImages]    = useState([])
     const [addedImages,         setAddedImages]      = useState([]);
 
-    const dispatch = useDispatch();
-    const currentUser = useSelector(state => state.authReducer.currentUser);
-    const cities = useSelector(state => state.venueReducer.cities);
-    const amenities = useSelector(state => state.venueReducer.amenities);
+    const dispatch      = useDispatch();
+    const currentUser   = useSelector(state => state.authReducer.currentUser);
+    const cities        = useSelector(state => state.venueReducer.cities);
+    const amenities     = useSelector(state => state.venueReducer.amenities);
 
     useEffect(() => {
         if (props.catererDetails) {
-            const getImageUrl = async (path) => {
+            const getImageUrl  = async (path) => {
                 const imageUrl = await GetImage(`caterer-images/${path}`);
-                setVenueBlobs( d => [...d, imageUrl]);
+                setImgBlobs( d => [...d, imageUrl]);
             }
-            for (const venueBlob of props.catererDetails.Images) {
-                getImageUrl(venueBlob);
+            for (const blob of props.catererDetails.Images) {
+                getImageUrl(blob);
             }
         }
     }, [props.catererDetails]);
@@ -40,7 +42,7 @@ const AddCatererModal = (props) => {
     const initialValues = {
         HostName: props.show.HostName || '',
         Title: props.show.Title || '',
-        StartRange: props.show.StartRange || '',
+        PriceRange: props.show.PriceRange || '',
         PricePerPlate: props.show.PricePerPlate || '',
         City: props.show.City || '',
         Menu: props.show.Menu || '',
@@ -56,17 +58,18 @@ const AddCatererModal = (props) => {
         HostName    : Yup.string().required('This field is required'),
         Title       : Yup.string().required('This field is required'),
         Menu        : Yup.array().required('Please select menu'),
-        StartRange  : Yup.string().required('This field is required'),
+        PriceRange  : Yup.string().required('Please provide price range'),
         City        : Yup.string().required('Please select city'),
         Locality    : Yup.string().required('This field is required'),
         Contact     : Yup.string().required('This field is required').min(10).max(10),
         Address     : Yup.string().required('This field is required'),
-        About       : Yup.string().required('This field is required'),    
+        About       : Yup.string().required('This field is required'),
+        Amenities   : Yup.array().min(1, 'Please select aleast 1 amenitie').required("Provide at least one amenitie"),    
     });
 
     const onSubmit = async (values) => {
         const btn = document.getElementById('add-caterer');
-        if (venueBlobs.length == 0) {
+        if (imgBlobs.length == 0) {
             return Swal.fire({
                 icon                : "error",
                 titleText           : "Error!",
@@ -91,7 +94,7 @@ const AddCatererModal = (props) => {
                 fileList = [...fileList, fileFullName]
             }
             let oldImage = [];
-            for (const image of venueBlobs) {
+            for (const image of imgBlobs) {
                 if (typeof(image) === 'string') {
                     const imageWithUrl = image.split('%2F')[1];
                     const finalImageName = imageWithUrl.split('?alt')[0];
@@ -103,7 +106,7 @@ const AddCatererModal = (props) => {
         }
         else {
             let fileList = [];
-            for(const venueBlob of venueBlobs) {
+            for(const venueBlob of imgBlobs) {
                 const ext = getFileExt(venueBlob.name)
                 const fileName = getString(20);
                 const fileFullName = Date.now() + `${fileName}.${ext}`
@@ -114,30 +117,20 @@ const AddCatererModal = (props) => {
         }
     }
 
-    const menues = [
-        {
-            ID : '1',
-            Name : 'Veg'
-        },
-        {
-            ID : '2',
-            Name : 'Non-Veg'
-        }
-    ]
+    const formik = useFormik({ initialValues, validationSchema, onSubmit });
 
-    
     const openImageModal = (e) => {
-        if (venueBlobs && venueBlobs.length > 0) {
+        if (imgBlobs && imgBlobs.length > 0) {
             setEditImageCropper({
-                venueBlobs   : venueBlobs,
+                imgBlobs   : imgBlobs,
                 imageRatio  : { width : 1000, height : 500},
-                dataHandler : (val) =>  setVenueBlobs(val),
+                dataHandler : (val) =>  setImgBlobs(val),
                 header      : 'Edit Caterer Image'
             });
         } else {
             setCropperData({
                 imageRatio  : { width : 1000, height : 500},
-                dataHandler : (val) =>  setVenueBlobs(val),
+                dataHandler : (val) =>  setImgBlobs(val),
                 header      : 'Caterer Image'
             });
         }
@@ -153,12 +146,6 @@ const AddCatererModal = (props) => {
         $('#add-caterer-modal').on('hidden.bs.modal',function() {  props.onDismissModal(props.catererDetails ? null :  false )  })
         $('#add-caterer-modal').modal('toggle');
     }, [props.show]);
-
-    const formik = useFormik({
-        initialValues,
-        validationSchema,
-        onSubmit
-    })
 
     return (
         <>
@@ -211,7 +198,7 @@ const AddCatererModal = (props) => {
                                         <label className="d-flex align-items-center fs-6 fw-bold mb-2">
                                             <span className="required"> Upload Image </span>
                                         </label>
-                                        <span className='btn btn-secondary form-control' onClick={openImageModal} ><i className='fa fa-upload'></i>{`${venueBlobs.length == 0 ? "Upload Venue Images" : venueBlobs.length + " Images Upload"}`}</span>
+                                        <span className='btn btn-secondary form-control' onClick={openImageModal} ><i className='fa fa-upload'></i>{`${imgBlobs.length == 0 ? "Upload Images" : imgBlobs.length + " Images Upload"}`}</span>
                                     </div>
                                 </div>
                                 <div className="row mb-5">
@@ -220,14 +207,10 @@ const AddCatererModal = (props) => {
                                             <span className="required"> Menu </span>
                                         </label>
                                         <Select
-                                            options={menues.map(m => ({
-                                                label : m.Name,
-                                                value : m.ID
-                                            }))}
-                                            value={formik.values.Menu}
-                                            name='Menu'
-                                            onChange={value => formik.setFieldValue('Menu', value)}
-                                            // onChange={value => formik.value('Menu', value.value)}
+                                            options  = {menues.map(m => ({ label : m.Name, value : m.ID }))}
+                                            value    = {formik.values.Menu}
+                                            name     = 'Menu'
+                                            onChange = {value => formik.setFieldValue('Menu', value)}                                          
                                             isMulti
                                         />
                                         {(formik.touched.Menu && formik.errors.Menu) ? <div className="error">{formik.errors.Menu}</div> : null}
@@ -238,13 +221,13 @@ const AddCatererModal = (props) => {
                                         </label>
                                         <input 
                                             type="text" 
-                                            name="StartRange"
-                                            value={formik.values.StartRange}
+                                            name="PriceRange"
+                                            value={formik.values.PriceRange}
                                             onChange={formik.handleChange}
                                             onBlur={formik.handleBlur}                
-                                            className={`form-control ${(formik.touched.StartRange && formik.errors.StartRange) && 'is-invalid' }`}
+                                            className={`form-control ${(formik.touched.PriceRange && formik.errors.PriceRange) && 'is-invalid' }`}
                                         />
-                                        {(formik.touched.StartRange && formik.errors.StartRange) ? <div className="error">{formik.errors.StartRange}</div> : null}
+                                        {(formik.touched.PriceRange && formik.errors.PriceRange) ? <div className="error">{formik.errors.PriceRange}</div> : null}
                                     </div>
                                     <div className="col-4">
                                         <label className="d-flex align-items-center fs-6 fw-bold mb-2">
@@ -267,35 +250,13 @@ const AddCatererModal = (props) => {
                                         <CustomSelect
                                             options={cities.map(c => ({
                                                 label : c.Name,
-                                                value : c.ID
+                                                value : c.Name
                                             }))}
                                             classNamePrefix="custom-select"
                                             value={formik.values.City}
                                             onChange={value => formik.setFieldValue('City', value.value)}
-                                        />
-                                        {/* <Select
-                                            onBlur={formik.handleBlur}
-                                            name="City"
-                                            onChange={value => formik.setFieldValue('City', value.value)}
-                                            // onChange={formik.handleChange}
-                                            className={`${(formik.touched.City && formik.errors.City) && 'is-invalid' }`}
-                                            // classNamePrefix ="custom-select"
-                                            options={cities.map(c => ({
-                                                label : c.Name,
-                                                value : c.ID
-                                            }))}
-                                            value={formik.values.City}
-
-                                        /> */}
-                                        {(formik.touched.City && formik.errors.City) ? <div className="error">{formik.errors.City}</div> : null}
-                                        {/* <input 
-                                            type="text" 
-                                            name="City"                                         
-                                            onChange={formik.handleChange}
-                                            onBlur={formik.handleBlur}                
-                                            className={`form-control ${(formik.touched.City && formik.errors.City) && 'is-invalid' }`}
-                                        />
-                                        {(formik.touched.City && formik.errors.City) ? <div className="error">{formik.errors.City}</div> : null} */}
+                                        />                                        
+                                        {(formik.touched.City && formik.errors.City) ? <div className="error">{formik.errors.City}</div> : null}                                        
                                     </div>
                                     <div className="col-4">
                                         <label className="d-flex align-items-center fs-6 fw-bold mb-2">
@@ -343,6 +304,7 @@ const AddCatererModal = (props) => {
                                             }))}
                                             value={formik.values.Amenities}
                                         />
+                                         {(formik.touched.Amenities && formik.errors.Amenities) ? <div className="error">{formik.errors.Amenities}</div> : null}                                      
                                     </div>
                                 </div>
                                 <div className="row mb-5">
@@ -409,6 +371,7 @@ const AddCatererModal = (props) => {
                     </div> 
                 </div>
             </div>
+            
             {cropperData && (
                 <ImageCropper
                     show           = {cropperData}
@@ -419,18 +382,18 @@ const AddCatererModal = (props) => {
                     from           = '#add-caterer-modal'
                 />
             )}
+
             {editImageCropper && (
                 <ImageCropper
                     show           = {editImageCropper}
                     header         = {editImageCropper.header}   
                     imageRatio     = {editImageCropper.imageRatio}
-                    imageBlobs     = {editImageCropper.venueBlobs}
+                    imageBlobs     = {editImageCropper.imgBlobs}
                     dataHandler    = {editImageCropper.dataHandler}
                     deletedImages  = {setDeletedImages}
                     addedImages    = {setAddedImages}
                     onDismissModal = {() => setEditImageCropper(null)}
                     from           = '#add-caterer-modal'
-
                 />
             )}
         </>

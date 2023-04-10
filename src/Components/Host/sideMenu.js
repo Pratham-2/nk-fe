@@ -11,8 +11,8 @@ const SideMenu = (props) => {
 	const [HostType, setHostType] = useState([]);
 
 	useEffect(() => {
-		if(currentUser && currentUser.HostType && currentUser.HostType.lenght != 0){
-			console.log("currentUser", currentUser);
+		if(currentUser && currentUser.HostType && currentUser.HostType.length != 0){
+			//console.log("currentUser", currentUser);
 			setHostType(currentUser.HostType);
 		}
 	},[currentUser]);
@@ -53,11 +53,11 @@ const SideMenu = (props) => {
 
 									{(HostType.length != 0) && HostType.map((s, i) => {
 
-										const serviceLink = `/host/${s.toLowerCase()}/all`;
+										const serviceLink = `/host/${s.toLowerCase()}`;
 
 										return(
 											<div className="menu-item" key={i}>
-												<NavLink className="menu-link menu-center" to={serviceLink} title="" data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-dismiss="click" data-bs-placement="right" data-bs-original-title="Venue">
+												<NavLink className="menu-link menu-center" to={serviceLink} title="" data-bs-original-title={s.toLowerCase()} data-bs-toggle="tooltip" data-bs-trigger="hover" data-bs-dismiss="click" data-bs-placement="right" >
 													<span className="menu-icon me-0 flex-column">
 														<i className="fa fa-hotel"></i>
 														<span className="m-0"> {s} </span>

@@ -20,17 +20,15 @@ const AddVenueModal = (props) => {
     const [deletedImages,       setDeletedImages]    = useState([])
     const [addedImages,         setAddedImages]      = useState([]);
 
-    const dispatch = useDispatch();
-    const currentUser = useSelector(state => state.authReducer.currentUser);
-    const cities = useSelector(state => state.venueReducer.cities);
-    const amenities = useSelector(state => state.venueReducer.amenities);
+    const dispatch      = useDispatch();
+    const currentUser   = useSelector(state => state.authReducer.currentUser);
+    const cities        = useSelector(state => state.venueReducer.cities);
+    const amenities     = useSelector(state => state.venueReducer.amenities);
 
-    // const user = auth;
     const initialValues = {
         HostName    : props.show.HostName || '',
-        Title       : props.show.Title || '',
-        StartRange  : props.show.StartRange || '',
-        EndRange    : props.show.EndRange || '',
+        Title       : props.show.Title || '',       
+        PriceRange  : props.show.PriceRange || '',
         MinCapacity : props.show.MinCapacity || '',
         MaxCapacity : props.show.MaxCapacity || '',
         City        : props.show.City || '',
@@ -38,29 +36,13 @@ const AddVenueModal = (props) => {
         Contact     : props.show.Contact || '',
         Address     : props.show.Address || '',
         Overview    : props.show.Overview ||'',
+        About       : props.show.About ||'',
         Amenities   : props.show.Amenities || '',
-        About       : props.show.About ||''
     }
-
-    useEffect(() => {
-        dispatch(getCities())
-        dispatch(getAmenities())
-    }, [dispatch]);
-
-    useEffect(() => {
-        if (props.venueDetails) {
-            const getImageUrl = async (path) => {
-                const imageUrl = await GetImage(`venues-images/${path}`);
-                setVenueBlobs( d => [...d, imageUrl]);
-            }
-            for (const venueBlob of props.venueDetails.Images) {
-                getImageUrl(venueBlob);
-            }
-        }
-    }, [props.venueDetails]);
 
     const onSubmit = async (values) => {
         const btn = document.getElementById('add-venue');
+
         if (venueBlobs.length == 0) {
             return Swal.fire({
                 icon                : "error",
@@ -71,14 +53,16 @@ const AddVenueModal = (props) => {
             });
         }
         StartProcessing(btn);
+
         if (props.venueDetails) {
-            if (deletedImages && deletedImages.length > 0) {
-              
+            if (deletedImages && deletedImages.length > 0) {              
                 for (const image of deletedImages) {
                     await DeleteImage(`venues-images/${image}`)
                 }
             }
+
             let fileList = [];
+
             for(const image of addedImages) {
                 const ext = getFileExt(image.name)
                 const fileName = getString(20);
@@ -86,7 +70,9 @@ const AddVenueModal = (props) => {
                 FileUploadHelper('venues-images', fileFullName, image);
                 fileList = [...fileList, fileFullName]
             }
+
             let oldImage = [];
+
             for (const image of venueBlobs) {
                 if (typeof(image) === 'string') {
                     const imageWithUrl = image.split('%2F')[1];
@@ -94,9 +80,12 @@ const AddVenueModal = (props) => {
                     oldImage = [...oldImage, finalImageName]
                 }
             }
+
             const updatedImageList = [...oldImage, ...fileList]
             dispatch(updateVenue({ ID: props.venueDetails.ID, ...values, VendorID : currentUser.ID, Images: updatedImageList })) // Venue Action Creator
+
         } else {
+
             let fileList = [];
             for(const venueBlob of venueBlobs) {
                 const ext = getFileExt(venueBlob.name)
@@ -108,20 +97,6 @@ const AddVenueModal = (props) => {
             dispatch(postVenue({ ...values, Active: 'N', VendorID : currentUser.ID, Images: fileList })) // Venue Action Creator
         }
     }
-
-    // const validate = values => {
-    //     let errors = {}
-
-    //     if (!values.HostName) {
-    //         errors.HostName = 'This field is required'
-    //     }
-
-    //     if (!values.VenueName) {
-    //         errors.VenueName = 'This field is required'
-    //     }
-
-    //     return errors
-    // }
 
     const openImageModal = (e) => {
         if (venueBlobs && venueBlobs.length > 0) {
@@ -141,11 +116,11 @@ const AddVenueModal = (props) => {
     }
 
     const validationSchema = Yup.object({
-        HostName    : Yup.string().required('This field is required'),
-        Title       : Yup.string().required('This field is required'),
-        StartRange  : Yup.number().integer().required('This field is required'),
-        MinCapacity : Yup.string().required('This field is required'),
-        MaxCapacity : Yup.number().integer().required('This field is required').moreThan(Yup.ref('MinCapacity'), 'Max Capacity should be greater than Min Capacity'),
+        HostName    : Yup.string().required('Please enter hostname'),
+        Title       : Yup.string().required('Please enter title'),      
+        PriceRange  : Yup.string().required('Please provide price range'),
+        MinCapacity : Yup.string().required('Please enter min capacity'),
+        MaxCapacity : Yup.number().integer().required('Please enter max capacity').moreThan(Yup.ref('MinCapacity'), 'Max Capacity should be greater than Min Capacity'),
         City        : Yup.string().required('Please select city'),
         Locality    : Yup.string().required('This field is required'),
         Contact     : Yup.string().required('This field is required').min(10).max(10),
@@ -155,18 +130,30 @@ const AddVenueModal = (props) => {
 
     const formik = useFormik({
         initialValues,
-        // validationSchema,
+        validationSchema,
         onSubmit
     })
 
-    const fetchImages = async () => {
-        const response = await db.collection('City').doc(props.show.City).get();
-        if (response) setCityName(response.data())
-    }
+    useEffect(() => {
+        dispatch(getCities())
+        dispatch(getAmenities())
+    }, [dispatch]);
+
+    useEffect(() => {
+        if (props.venueDetails) {
+            const getImageUrl = async (path) => {
+                const imageUrl = await GetImage(`venues-images/${path}`);
+                setVenueBlobs( d => [...d, imageUrl]);
+            }
+            for (const venueBlob of props.venueDetails.Images) {
+                getImageUrl(venueBlob);
+            }
+        }
+    }, [props.venueDetails]);
 
     useEffect(() => {
         $('#add-venue-modal').modal({ backdrop: 'static'});
-        $('#add-venue-modal').on('hidden.bs.modal',function() { props.onDismissModal(props.venueDetails ? null :  false ) })
+        $('#add-venue-modal').on('hidden.bs.modal',function() { props.onDismissModal( false ) })
         $('#add-venue-modal').modal('toggle');
     }, [props.show])
 
@@ -231,13 +218,13 @@ const AddVenueModal = (props) => {
                                         </label>
                                         <input 
                                             type="text" 
-                                            name="StartRange"
-                                            value={formik.values.StartRange}
+                                            name="PriceRange"
+                                            value={formik.values.PriceRange}
                                             onChange={formik.handleChange}
                                             onBlur={formik.handleBlur}                
-                                            className={`form-control ${(formik.touched.StartRange && formik.errors.StartRange) && 'is-invalid' }`}
+                                            className={`form-control ${(formik.touched.PriceRange && formik.errors.PriceRange) && 'is-invalid' }`}
                                         />
-                                        {(formik.touched.StartRange && formik.errors.StartRange) ? <div className="error">{formik.errors.StartRange}</div> : null}
+                                        {(formik.touched.PriceRange && formik.errors.PriceRange) ? <div className="error">{formik.errors.PriceRange}</div> : null}
                                     </div>
                                     <div className="col-4">
                                         <label className="d-flex align-items-center fs-6 fw-bold mb-2">
@@ -276,35 +263,14 @@ const AddVenueModal = (props) => {
                                         <CustomSelect
                                             options={cities.map(c => ({
                                                 label : c.Name,
-                                                value : c.ID
+                                                value : c.Name
                                             }))}
                                             classNamePrefix="custom-select"
                                             value={formik.values.City}
                                             onChange={value => formik.setFieldValue('City', value.value)}
                                         />
-                                        {/* <Select
-                                            onBlur={formik.handleBlur}
-                                            name="City"
-                                            onChange={value => formik.setFieldValue('City', value.value)}
-                                            // onChange={formik.handleChange}
-                                            className={`${(formik.touched.City && formik.errors.City) && 'is-invalid' }`}
-                                            // classNamePrefix ="custom-select"
-                                            options={cities.map(c => ({
-                                                label : c.Name,
-                                                value : c.ID
-                                            }))}
-                                            value={formik.values.City}
-
-                                        /> */}
-                                        {(formik.touched.City && formik.errors.City) ? <div className="error">{formik.errors.City}</div> : null}
-                                        {/* <input 
-                                            type="text" 
-                                            name="City"                                         
-                                            onChange={formik.handleChange}
-                                            onBlur={formik.handleBlur}                
-                                            className={`form-control ${(formik.touched.City && formik.errors.City) && 'is-invalid' }`}
-                                        />
-                                        {(formik.touched.City && formik.errors.City) ? <div className="error">{formik.errors.City}</div> : null} */}
+                                       
+                                        {(formik.touched.City && formik.errors.City) ? <div className="error">{formik.errors.City}</div> : null}                                      
                                     </div>
                                     <div className="col-4">
                                         <label className="d-flex align-items-center fs-6 fw-bold mb-2">

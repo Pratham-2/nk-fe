@@ -17,9 +17,6 @@ import TopLink from "../Global/TopLink";
 import moment from 'moment';
 import { searchActions } from "../../store/search/search-slice";
 import { CustomSwiper } from "../Venues/Venues";
-// import venue1 from '../../Assets/images/venue1.jpg'
-// import birthday from '../../Assets/images/birthday.jpg'
-// import { db } from "../../firebaseConfig/firebase";
 
 
 const VenueList = () => {
@@ -27,26 +24,17 @@ const VenueList = () => {
     const history 	  	                                  = useHistory();
     const dispatch                                        = useDispatch();
     const match                                           = useRouteMatch().params;
+
     const globalCities                                    = useSelector(s => s.searchReducer.cities);
     const isLoading                                       = useSelector(s => s.uiReducer.isLoading);
-    const locality                                        = useSelector(s => s.searchReducer.locality);
-    const price                                           = useSelector(s => s.searchReducer.price);
-    const serviceClick                                    = (venueId) =>  history.push(`/venue/${venueId}`);
-    const onChangeCityFilter                              = (cityId)  => {history.push(`/venues/${cityId}`);setdefaultLocalityValue('');setSelectedLocality(''); }
+   
     const [featuredList , setFeaturedList]                = useState([])
-    const [filters,   setFilters]                         = useState({});
-
     const [selectedCity, setSelectedCity]                 = useState([]);
     
-    const [selectedLocality, setSelectedLocality]          = useState([]);
-    const [defaultLocalityValue, setdefaultLocalityValue]  = useState('');
-    const [priceValue, setPriceValue]       = useState('')
     
-    const onChangeLocalityFilter = (locality) => {setdefaultLocalityValue({label:locality,value:locality});setSelectedLocality(locality)}
-    const onChangePriceFilter = (price) => {
-        setPriceValue({ value: price, label: `Upto ${price}` })
-    }
-    
+    const serviceClick                                    = (venueId) =>  history.push(`/venue/${venueId}`);
+    const onChangeCityFilter                              = (cityId)  => { history.push(`/venues/${cityId}`);}
+     
     useEffect(() => {
         let ignore = false;
         const fetchVenues = async() => {
@@ -67,9 +55,7 @@ const VenueList = () => {
                 //set city filter dd value from globalcities
                 const selectedCity = globalCities.find(c => c.value === cityId);
                 if(selectedCity) setSelectedCity(selectedCity);
-
-
-                // setFilters({...filters, selectedCity, selectedLocality:{value:selectedLocality,label:selectedLocality},selectedPrice:{value:price,label:`Upto ${price}`}});
+            
                 dispatch(uiActions.toggleLoading(false))           
 
             } catch (err) {
@@ -83,7 +69,7 @@ const VenueList = () => {
         return () => { 
            ignore = true 
         }
-    },[match, globalCities,selectedLocality,priceValue])
+    },[match, globalCities ])
 
 	return (<>
          {isLoading ? <Loader/> 

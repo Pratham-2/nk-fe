@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
-import fire, { db, auth } from "../../firebaseConfig/firebaseConfig";
+import { db } from "../../firebaseConfig/firebaseConfig";
 import swal from "sweetalert2";
+import { States, Cities } from '../utils/data';
 
 const venueSlice = createSlice({
     name        : 'venueSlice',
@@ -106,12 +107,15 @@ export const getAmenities = () => {
 export const getCities = () => {
     return async (dispatch) => {
         try {
-            const response = await db.collection('City').get();
-            let city = [];
-            if (response.docs.length > 0) response.forEach(r => city.push({ID: r.id, ...r.data()}));
-            dispatch(venueSlice.actions.setCities(city))
-            // response.forEach(r => dispatch(venueSlice.actions.setCities(r.data())))
+            let initialCities = [];
 
+            Cities.sort((a,b) => { 
+                if(a.Name < b.Name) return -1 
+                if(a.Name > b.Name) return 1 
+                return 0;
+            }).forEach(c => initialCities.push({ value: c.Name, label: c.Name, ...c}));
+
+            dispatch(venueSlice.actions.setCities(initialCities))           
         } catch (err) {
             swal.fire({
                 icon      : 'error',
@@ -169,31 +173,15 @@ export const deactivateVenue = (params) => {
 
 export const getVenues = (params) => {
 
-    return async (dispatch) => {
-        // const fetchData = async () => {
-        //     const response = await db.collection('Venues').where('VendorID', '==' , params).get();
-        //     response.forEach(a => dispatch(venueSlice.actions.setVenueList(a.data())))
-        //     // console.log(response)
-
-        //     // const data = response.
-        //     // console.log(data)
-        //     // const data = await response.json();
-
-        //     // return data;
-        // }
+    return async (dispatch) => {        
         try {
             dispatch(venueActions.setLoading(true))
-            const res = await db.collection('Venues').where('VendorID', '==' , params).where('Active', '==', 'Y').onSnapshot((d)=>{
-                let v = [];
-                
-                d.forEach(a => v.push({ID: a.id, ...a.data()}))
-                // if(res.docs.length > 0) res.forEach( vn => v.push(vn.data())) ;
+            await db.collection('Venues').where('VendorID', '==' , params).where('Active', '==', 'Y').onSnapshot((d) => {
+                let v = [];                           
+                d.forEach(a => v.push({ID: a.id, ...a.data()}))                                          
                 dispatch(venueSlice.actions.setVenueList(v))
             });
             dispatch(venueActions.setLoading(false))
-            // let v = [];
-            // if(res.docs.length > 0) res.forEach( vn => v.push(vn.data())) ;
-            // dispatch(venueSlice.actions.setVenueList(v))
         } catch (err) {
             dispatch(venueActions.setLoading(false))
             swal.fire({
@@ -203,8 +191,6 @@ export const getVenues = (params) => {
         }
     }
 }
-
-// export const getSingleVenue
 
 export const venueActions = venueSlice.actions;
 export default venueSlice;

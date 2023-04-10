@@ -18,8 +18,7 @@ const decoratorSlice = createSlice({
         },
         setDecoratorList(state, action) {
             const decoraters = action.payload;
-            state.decoratorList = decoraters
-            // state.venuesList = [...state.venuesList, venues]
+            state.decoratorList = decoraters        
         },
     }
 });
