@@ -2,27 +2,26 @@ import React, { useEffect, useState } from "react";
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
 import { useDispatch, useSelector } from 'react-redux';
-import { getCities, postVenue, updateVenue } from "../../store/host/venue-slice";
-import { auth } from "../../firebaseConfig/firebaseConfig";
+import { getCities } from "../../store/host/venue-slice";
 import { DeleteImage, getFileExt, GetImage, getString, FileUploadHelper, StartProcessing } from "../Global/Helper";
 import Select from "react-select";
 import CustomSelect from "./CustomSelect";
-import { postPhotographer, updatePhotographer } from "../../store/host/photographer-slice";
 import { postDecorator, updateDecorator } from "../../store/host/decorator-slice";
 import ImageCropper from "../Global/ImageCropper";
 
 const AddDecoratorModal = (props) => {
 
-    const [cropperData,         setCropperData]      = useState(null);
-    const [venueBlobs,          setVenueBlobs]       = useState([]);
-    const [editImageCropper,    setEditImageCropper] = useState(null);
-    const [deletedImages,       setDeletedImages]    = useState([])
-    const [addedImages,         setAddedImages]      = useState([]);
+    const type = [{ID : '1', Name : 'Outdoor'},{ID : '2',Name : 'Indoor'} ];
 
+    const [cropperData,      setCropperData]      = useState(null);
+    const [venueBlobs,       setVenueBlobs]       = useState([]);
+    const [editImageCropper, setEditImageCropper] = useState(null);
+    const [deletedImages,    setDeletedImages]    = useState([])
+    const [addedImages,      setAddedImages]      = useState([]);
 
-    const dispatch = useDispatch();
+    const dispatch    = useDispatch();
     const currentUser = useSelector(state => state.authReducer.currentUser);
-    const cities = useSelector(state => state.venueReducer.cities);
+    const cities      = useSelector(state => state.venueReducer.cities);
 
     useEffect(() => {
         if (props.decoratorDetails) {
@@ -37,22 +36,22 @@ const AddDecoratorModal = (props) => {
     }, [props.decoratorDetails]);
 
     const initialValues = {
-        HostName: props.show.HostName || '',
-        Title: props.show.Title || '',
-        StartRange: props.show.StartRange || '',
-        City: props.show.City || '',
-        Locality: props.show.Locality || '',
-        Contact: props.show.Contact || '',
-        Type: props.show.Type || '',
-        Address: props.show.Address || '',
-        Overview: props.show.Overview ||'',
-        About: props.show.About ||''
+        HostName    : props.show.HostName || '',
+        Title       : props.show.Title || '',
+        PriceRange  : props.show.PriceRange || '',
+        City        : props.show.City || '',
+        Locality    : props.show.Locality || '',
+        Contact     : props.show.Contact || '',
+        Type        : props.show.Type || '',
+        Address     : props.show.Address || '',
+        Overview    : props.show.Overview ||'',
+        About       : props.show.About ||''
     }
 
     const validationSchema = Yup.object({
         HostName    : Yup.string().required('This field is required'),
         Title       : Yup.string().required('This field is required'),
-        StartRange  : Yup.number().integer().required('This field is required'),
+        PriceRange  : Yup.string().required('Please provide price range'),
         City        : Yup.string().required('Please select city'),
         Locality    : Yup.string().required('This field is required'),
         Contact     : Yup.string().required('This field is required').min(10).max(10),
@@ -74,8 +73,7 @@ const AddDecoratorModal = (props) => {
         const btn = document.getElementById('add-decorator');
         if (venueBlobs.length == 0) {
             return Swal.fire({
-                icon                : "error",
-                titleText           : "Error!",
+                icon                : "warning",          
                 text                : 'Add Atleast One Image',
                 buttonsStyling      : false,
                 confirmButtonClass  : "btn btn-primary",
@@ -116,7 +114,7 @@ const AddDecoratorModal = (props) => {
                 FileUploadHelper('decorator-images', fileFullName, venueBlob);
                 fileList = [...fileList, fileFullName]
             }
-            dispatch(postDecorator({ ...values, Active: 'N', VendorID : currentUser.ID, Images: fileList })) // Venue Action Creator
+            dispatch(postDecorator({ ...values, Active: 'Y', VendorID : currentUser.ID, Images: fileList })) // Venue Action Creator
         }
     }
 
@@ -142,17 +140,6 @@ const AddDecoratorModal = (props) => {
         validationSchema,
         onSubmit
     });
-
-    const type = [
-        {
-            ID : '1',
-            Name : 'Outdoor'
-        },
-        {
-            ID : '2',
-            Name : 'Indoor'
-        }
-    ]
 
     return (
         <>
@@ -205,7 +192,7 @@ const AddDecoratorModal = (props) => {
                                         <label className="d-flex align-items-center fs-6 fw-bold mb-2">
                                             <span className="required"> Upload Image </span>
                                         </label>
-                                        <span className='btn btn-secondary form-control' onClick={openImageModal} ><i className='fa fa-upload'></i>{`${venueBlobs.length == 0 ? "Upload Venue Images" : venueBlobs.length + " Images Upload"}`}</span>
+                                        <span className='btn btn-secondary form-control' onClick={openImageModal} ><i className='fa fa-upload'></i>{`${venueBlobs.length == 0 ? "Upload Images" : venueBlobs.length + " Images Upload"}`}</span>
                                     </div>
                                 </div>
                                 <div className="row mb-5">
@@ -214,51 +201,26 @@ const AddDecoratorModal = (props) => {
                                             <span className="required"> Price Start Range </span>
                                         </label>
                                         <input 
-                                            type="number" 
-                                            name="StartRange"
-                                            value={formik.values.StartRange}
+                                            type="text" 
+                                            name="PriceRange"
+                                            value={formik.values.PriceRange}
                                             onChange={formik.handleChange}
                                             onBlur={formik.handleBlur}                
-                                            className={`form-control ${(formik.touched.StartRange && formik.errors.StartRange) && 'is-invalid' }`}
+                                            className={`form-control ${(formik.touched.PriceRange && formik.errors.PriceRange) && 'is-invalid' }`}
                                         />
-                                        {(formik.touched.StartRange && formik.errors.StartRange) ? <div className="error">{formik.errors.StartRange}</div> : null}
+                                        {(formik.touched.PriceRange && formik.errors.PriceRange) ? <div className="error">{formik.errors.PriceRange}</div> : null}
                                     </div>
                                     <div className="col-4">
                                         <label className="d-flex align-items-center fs-6 fw-bold mb-2">
                                             <span className="required"> City </span>
                                         </label>
                                         <CustomSelect
-                                            options={cities.map(c => ({
-                                                label : c.Name,
-                                                value : c.ID
-                                            }))}
+                                            options={cities.map(c => ({ label : c.Name, value : c.Name }))}
                                             classNamePrefix="custom-select"
                                             value={formik.values.City}
                                             onChange={value => formik.setFieldValue('City', value.value)}
-                                        />
-                                        {/* <Select
-                                            onBlur={formik.handleBlur}
-                                            name="City"
-                                            onChange={value => formik.setFieldValue('City', value.value)}
-                                            // onChange={formik.handleChange}
-                                            className={`${(formik.touched.City && formik.errors.City) && 'is-invalid' }`}
-                                            // classNamePrefix ="custom-select"
-                                            options={cities.map(c => ({
-                                                label : c.Name,
-                                                value : c.ID
-                                            }))}
-                                            value={formik.values.City}
-
-                                        /> */}
-                                        {(formik.touched.City && formik.errors.City) ? <div className="error">{formik.errors.City}</div> : null}
-                                        {/* <input 
-                                            type="text" 
-                                            name="City"                                         
-                                            onChange={formik.handleChange}
-                                            onBlur={formik.handleBlur}                
-                                            className={`form-control ${(formik.touched.City && formik.errors.City) && 'is-invalid' }`}
-                                        />
-                                        {(formik.touched.City && formik.errors.City) ? <div className="error">{formik.errors.City}</div> : null} */}
+                                        />                                        
+                                        {(formik.touched.City && formik.errors.City) ? <div className="error">{formik.errors.City}</div> : null}                                        
                                     </div>
                                     <div className="col-4">
                                         <label className="d-flex align-items-center fs-6 fw-bold mb-2">
@@ -295,14 +257,10 @@ const AddDecoratorModal = (props) => {
                                             <span> Type of Decoration</span>
                                         </label>
                                         <Select
-                                            options={type.map(m => ({
-                                                label : m.Name,
-                                                value : m.ID
-                                            }))}
+                                            options={type.map(m => ({ label : m.Name, value : m.ID }))}
                                             value={formik.values.Type}
                                             name='Type'
-                                            onChange={value => formik.setFieldValue('Type', value)}
-                                            // onChange={value => formik.value('Menu', value.value)}
+                                            onChange={value => formik.setFieldValue('Type', value)}                                            
                                             isMulti
                                         />
                                         {(formik.touched.Menu && formik.errors.Menu) ? <div className="error">{formik.errors.Menu}</div> : null}

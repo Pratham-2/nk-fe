@@ -18,34 +18,36 @@ const AddPhotographerModal = (props) => {
     const [deletedImages,       setDeletedImages]    = useState([])
     const [addedImages,         setAddedImages]      = useState([]);
 
-    const dispatch = useDispatch();
+    const dispatch    = useDispatch();
+
     const currentUser = useSelector(state => state.authReducer.currentUser);
-    const cities = useSelector(state => state.venueReducer.cities);
-    const amenities = useSelector(state => state.venueReducer.amenities);
+    const cities      = useSelector(state => state.venueReducer.cities);
+    const amenities   = useSelector(state => state.venueReducer.amenities);
 
     const initialValues = {
-        HostName: props.show.HostName || '',
-        Title: props.show.Title || '',
-        StartRange: props.show.StartRange || '',
-        City: props.show.City || '',
-        Locality: props.show.Locality || '',
-        Contact: props.show.Contact || '',
-        Travelling: props.show.Travelling || '',
-        Amenities: props.show.Amenities || '',
-        Address: props.show.Address || '',
-        Overview: props.show.Overview ||'',
-        About: props.show.About ||''
+        HostName    : props.show.HostName || '',
+        Title       : props.show.Title || '',
+        PriceRange  : props.show.PriceRange || '',
+        City        : props.show.City || '',
+        Locality    : props.show.Locality || '',
+        Contact     : props.show.Contact || '',
+        Travelling  : props.show.Travelling || '',
+        Amenities   : props.show.Amenities || '',
+        Address     : props.show.Address || '',
+        Overview    : props.show.Overview ||'',
+        About       : props.show.About ||''
     }
 
     const validationSchema = Yup.object({
         HostName    : Yup.string().required('This field is required'),
         Title       : Yup.string().required('This field is required'),
-        StartRange  : Yup.number().integer().required('This field is required'),
+        PriceRange  : Yup.string().required('Please provide price range'),
         City        : Yup.string().required('Please select city'),
         Locality    : Yup.string().required('This field is required'),
         Contact     : Yup.string().required('This field is required').min(10).max(10),
         Address     : Yup.string().required('This field is required'),
-        About       : Yup.string().required('This field is required'),    
+        About       : Yup.string().required('This field is required'),
+        Amenities   : Yup.array().min(1, 'Please select aleast 1 amenitie').required("Provide at least one amenitie"),        
     });
 
     useEffect(() => {
@@ -75,8 +77,7 @@ const AddPhotographerModal = (props) => {
         const btn = document.getElementById('add-photographer');
         if (venueBlobs.length == 0) {
             return Swal.fire({
-                icon                : "error",
-                titleText           : "Error!",
+                icon                : "warning",          
                 text                : 'Add Atleast One Image',
                 buttonsStyling      : false,
                 confirmButtonClass  : "btn btn-primary",
@@ -117,7 +118,7 @@ const AddPhotographerModal = (props) => {
                 FileUploadHelper('photographer-images', fileFullName, venueBlob);
                 fileList = [...fileList, fileFullName]
             }
-            dispatch(postPhotographer({ ...values, Active: 'N', VendorID : currentUser.ID, Images: fileList })) // Venue Action Creator
+            dispatch(postPhotographer({ ...values, Active: 'Y', VendorID : currentUser.ID, Images: fileList })) // Venue Action Creator
         }
     }
 
@@ -195,7 +196,7 @@ const AddPhotographerModal = (props) => {
                                         <label className="d-flex align-items-center fs-6 fw-bold mb-2">
                                             <span className="required"> Upload Image </span>
                                         </label>
-                                        <span className='btn btn-secondary form-control' onClick={openImageModal} ><i className='fa fa-upload'></i>{`${venueBlobs.length == 0 ? "Upload Venue Images" : venueBlobs.length + " Images Upload"}`}</span>
+                                        <span className='btn btn-secondary form-control' onClick={openImageModal} ><i className='fa fa-upload'></i>{`${venueBlobs.length == 0 ? "Upload Images" : venueBlobs.length + " Images Upload"}`}</span>
                                     </div>
                                 </div>
                                 <div className="row mb-5">
@@ -204,51 +205,26 @@ const AddPhotographerModal = (props) => {
                                             <span className="required"> Price Range </span>
                                         </label>
                                         <input 
-                                            type="number" 
-                                            name="StartRange"
-                                            value={formik.values.StartRange}
+                                            type="text" 
+                                            name="PriceRange"
+                                            value={formik.values.PriceRange}
                                             onChange={formik.handleChange}
                                             onBlur={formik.handleBlur}                
-                                            className={`form-control ${(formik.touched.StartRange && formik.errors.StartRange) && 'is-invalid' }`}
+                                            className={`form-control ${(formik.touched.PriceRange && formik.errors.PriceRange) && 'is-invalid' }`}
                                         />
-                                        {(formik.touched.StartRange && formik.errors.StartRange) ? <div className="error">{formik.errors.StartRange}</div> : null}
+                                        {(formik.touched.PriceRange && formik.errors.PriceRange) ? <div className="error">{formik.errors.PriceRange}</div> : null}
                                     </div>
                                     <div className="col-4">
                                         <label className="d-flex align-items-center fs-6 fw-bold mb-2">
                                             <span className="required"> City </span>
                                         </label>
                                         <CustomSelect
-                                            options={cities.map(c => ({
-                                                label : c.Name,
-                                                value : c.ID
-                                            }))}
+                                            options={cities.map(c => ({ label : c.Name, value : c.Name }))}
                                             classNamePrefix="custom-select"
                                             value={formik.values.City}
                                             onChange={value => formik.setFieldValue('City', value.value)}
-                                        />
-                                        {/* <Select
-                                            onBlur={formik.handleBlur}
-                                            name="City"
-                                            onChange={value => formik.setFieldValue('City', value.value)}
-                                            // onChange={formik.handleChange}
-                                            className={`${(formik.touched.City && formik.errors.City) && 'is-invalid' }`}
-                                            // classNamePrefix ="custom-select"
-                                            options={cities.map(c => ({
-                                                label : c.Name,
-                                                value : c.ID
-                                            }))}
-                                            value={formik.values.City}
-
-                                        /> */}
-                                        {(formik.touched.City && formik.errors.City) ? <div className="error">{formik.errors.City}</div> : null}
-                                        {/* <input 
-                                            type="text" 
-                                            name="City"                                         
-                                            onChange={formik.handleChange}
-                                            onBlur={formik.handleBlur}                
-                                            className={`form-control ${(formik.touched.City && formik.errors.City) && 'is-invalid' }`}
-                                        />
-                                        {(formik.touched.City && formik.errors.City) ? <div className="error">{formik.errors.City}</div> : null} */}
+                                        />                                        
+                                        {(formik.touched.City && formik.errors.City) ? <div className="error">{formik.errors.City}</div> : null}                                    
                                     </div>
                                     <div className="col-4">
                                         <label className="d-flex align-items-center fs-6 fw-bold mb-2">
@@ -305,12 +281,10 @@ const AddPhotographerModal = (props) => {
                                             onChange={value => formik.setFieldValue('Amenities', value)}
                                             placeholder='Select Amenities'
                                             name="Amenities"
-                                            options={amenities.map(a => ({
-                                                label: a,
-                                                value: a
-                                            }))}
+                                            options={amenities.map(a => ({  label: a, value: a }))}
                                             value={formik.values.Amenities}
                                         />
+                                        {(formik.touched.Amenities && formik.errors.Amenities) ? <div className="error">{formik.errors.Amenities}</div> : null}                                      
                                     </div>
                                 </div>
                                 <div className="row mb-5">

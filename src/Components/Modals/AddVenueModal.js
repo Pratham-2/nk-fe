@@ -45,8 +45,7 @@ const AddVenueModal = (props) => {
 
         if (venueBlobs.length == 0) {
             return Swal.fire({
-                icon                : "error",
-                titleText           : "Error!",
+                icon                : "warning",                
                 text                : 'Add Atleast One Image',
                 buttonsStyling      : false,
                 confirmButtonClass  : "btn btn-primary",
@@ -94,7 +93,7 @@ const AddVenueModal = (props) => {
                 FileUploadHelper('venues-images', fileFullName, venueBlob);
                 fileList = [...fileList, fileFullName]
             }
-            dispatch(postVenue({ ...values, Active: 'N', VendorID : currentUser.ID, Images: fileList })) // Venue Action Creator
+            dispatch(postVenue({ ...values, Active: 'Y', VendorID : currentUser.ID, Images: fileList })) // Venue Action Creator
         }
     }
 
@@ -125,7 +124,8 @@ const AddVenueModal = (props) => {
         Locality    : Yup.string().required('This field is required'),
         Contact     : Yup.string().required('This field is required').min(10).max(10),
         Address     : Yup.string().required('This field is required'),
-        About       : Yup.string().required('This field is required'),    
+        About       : Yup.string().required('This field is required'),
+        Amenities   : Yup.array().min(1, 'Please select aleast 1 amenitie').required("Provide at least one amenitie"),        
     });
 
     const formik = useFormik({
@@ -318,6 +318,7 @@ const AddVenueModal = (props) => {
                                             }))}
                                             value={formik.values.Amenities}
                                         />
+                                        {(formik.touched.Amenities && formik.errors.Amenities) ? <div className="error">{formik.errors.Amenities}</div> : null}                                      
                                     </div>
                                 </div>
                                 <div className="row mb-5">

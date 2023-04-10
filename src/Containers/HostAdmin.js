@@ -52,11 +52,11 @@ const HostAdmin = () => {
                     <Route exact path='/host/caterers'>
                         <Caterers />
                     </Route>
-                    <Route exact path='/host/photographer'>
-                        <Photographers />
-                    </Route>
                     <Route exact path='/host/decorators'>
                         <Decorators />
+                    </Route>
+                    <Route exact path='/host/photographer'>
+                        <Photographers />
                     </Route>
                     <Route exact path='/host/beauticians'>
                         <BeauticianHost />

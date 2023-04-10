@@ -71,8 +71,7 @@ const AddCatererModal = (props) => {
         const btn = document.getElementById('add-caterer');
         if (imgBlobs.length == 0) {
             return Swal.fire({
-                icon                : "error",
-                titleText           : "Error!",
+                icon                : "warning",                
                 text                : 'Add Atleast One Image',
                 buttonsStyling      : false,
                 confirmButtonClass  : "btn btn-primary",
@@ -113,7 +112,7 @@ const AddCatererModal = (props) => {
                 FileUploadHelper('caterer-images', fileFullName, venueBlob);
                 fileList = [...fileList, fileFullName]
             }
-            dispatch(postCaterer({ ...values, Active: 'N', VendorID : currentUser.ID, Images: fileList })) // Venue Action Creator
+            dispatch(postCaterer({ ...values, Active: 'Y', VendorID : currentUser.ID, Images: fileList })) // Venue Action Creator
         }
     }
 
