@@ -25,41 +25,40 @@ const AddServiceModal = (props) => {
     let initialValues = {
         HostName    : serviceDetails.HostName   || '',
         Title       : serviceDetails.Title      || '',
-        StartRange  : serviceDetails.StartRange || '',
-        EndRange    : serviceDetails.EndRange   || '',
         City        : serviceDetails.City       || '',
         Locality    : serviceDetails.Locality   || '',
         Contact     : serviceDetails.Contact    || '',
         Address     : serviceDetails.Address    || '',
         Overview    : serviceDetails.Overview   || '',
-        About       : serviceDetails.About      || ''
+        About       : serviceDetails.About      || '',
+        PriceRange  : serviceDetails.PriceRange || '',
+        // StartRange  : serviceDetails.StartRange || '',
+        // EndRange    : serviceDetails.EndRange   || '',
     }
-
 
     const validationSchema = Yup.object({
         HostName    : Yup.string().required('This field is required'),
         Title       : Yup.string().required('This field is required'),
-        StartRange  : Yup.number().integer().required('Required'),
-        EndRange    : Yup.number().integer().required('Required'),
+        PriceRange  : Yup.string().required('Please provide price range'),
         City        : Yup.string().required('Please select city'),
         Locality    : Yup.string().required('This field is required'),
         Contact     : Yup.string().required('This field is required').min(10).max(10),
         Address     : Yup.string().required('This field is required'),
         Overview    : Yup.string(),
         About       : Yup.string().required('This field is required'),    
+        // StartRange  : Yup.number().integer().required('Required'),
+        // EndRange    : Yup.number().integer().required('Required'), 
     });
 
     useEffect(() => {
         dispatch(getCities())
     }, [dispatch]);
 
-
     useEffect(() => {
         $('#add-service-modal').modal({ backdrop: 'static'});
         $('#add-service-modal').on('hidden.bs.modal',function() { props.onDismissModal( false ) })
         $('#add-service-modal').modal('toggle');
     }, [props.show]);
-
 
     useEffect(() => {
         if(serviceDetails && serviceDetails.Images.length > 0){
@@ -68,16 +67,12 @@ const AddServiceModal = (props) => {
                 if(imageUrl != 'ImageNotFound') setImageBlobs( d => [ ...d, imageUrl]);
             }
             
-            for (const img of serviceDetails.Images) {
-                getImageUrl(img);
-            }
+            for (const img of serviceDetails.Images) { getImageUrl(img) }
         }
-
     }, [serviceDetails])
 
 
     const onSubmit = async(values) => {
-   
         const btn = document.getElementById('add-service');
         
         if (ImageBlobs.length == 0) {
@@ -92,7 +87,6 @@ const AddServiceModal = (props) => {
         StartProcessing(btn)
 
         if (serviceDetails) {
-
             if (deletedImages && deletedImages.length > 0) {
                 for (const image of deletedImages) {
                     await DeleteImage(`service-images/${image}`)
@@ -112,7 +106,7 @@ const AddServiceModal = (props) => {
 
             for (const image of ImageBlobs) {
                 if (typeof(image) == 'string') {
-                    const imageWithUrl = image.split('%2F')[1];
+                    const imageWithUrl   = image.split('%2F')[1];
                     const finalImageName = imageWithUrl.split('?alt')[0];
                     oldImage.push(finalImageName);
                 }
@@ -122,30 +116,24 @@ const AddServiceModal = (props) => {
 
             // UPDATE ACTION CREATOR
             UpdateService ({ ID: serviceDetails.ID, ...values, VendorID : currentUser.ID, Images : updatedImageList });
-
         }
         else {
 
             let fileList = [];
             for(const venueBlob of ImageBlobs) {
-                const ext = getFileExt(venueBlob.name)
-                const fileName = getString(20);
-                const fileFullName = Date.now() + `${fileName}.${ext}`
+                const ext           = getFileExt(venueBlob.name)
+                const fileName      = getString(20);
+                const fileFullName  = Date.now() + `${fileName}.${ext}`
                 FileUploadHelper('service-images', fileFullName, venueBlob);
                 fileList = [...fileList, fileFullName]
             }
             
             //ADD ACTION CREATOR
-            AddService({ ...values, Active: 'N', VendorID : currentUser.ID, Images: fileList });
-
+            AddService({ ...values, Active: 'Y', VendorID : currentUser.ID, Images: fileList });
         }
     }
 
-    const formik = useFormik({
-        initialValues,
-        validationSchema,
-        onSubmit
-    })
+    const formik = useFormik({ initialValues, validationSchema, onSubmit });
 
     const openImageModal = (e) => {
         if (ImageBlobs && ImageBlobs.length > 0) {
@@ -219,7 +207,7 @@ const AddServiceModal = (props) => {
                                             <span className="required"> Contact No. </span>
                                         </label>
                                         <input 
-                                            type="number" 
+                                            type="text" 
                                             name="Contact"                   
                                             value={formik.values.Contact}
                                             onChange={formik.handleChange}
@@ -229,6 +217,20 @@ const AddServiceModal = (props) => {
                                         {(formik.touched.Contact && formik.errors.Contact) ? <div className="error">{formik.errors.Contact}</div> : null}
                                     </div>
                                     <div className="col-md-4 col-6">
+                                        <label className="d-flex align-items-center fs-6 fw-bold mb-2">
+                                            <span className="required"> Price Range </span>
+                                        </label>
+                                        <input 
+                                            type="text" 
+                                            name="PriceRange"
+                                            value={formik.values.PriceRange}
+                                            onChange={formik.handleChange}
+                                            onBlur={formik.handleBlur}                
+                                            className={`form-control ${(formik.touched.PriceRange && formik.errors.PriceRange) && 'is-invalid' }`}
+                                        />
+                                        {(formik.touched.PriceRange && formik.errors.PriceRange) ? <div className="error">{formik.errors.PriceRange}</div> : null}
+                                    </div>
+                                    {/* <div className="col-md-4 col-6">
                                         <label className="d-flex align-items-center fs-6 fw-bold mb-2">
                                             <span className="required"> Price Range ₹</span>
                                         </label>
@@ -252,13 +254,13 @@ const AddServiceModal = (props) => {
                                             />
                                         </div>
                                         {( (formik.touched.StartRange && formik.errors.StartRange) || (formik.touched.EndRange && formik.errors.EndRange) ) ? <div className="error">{ formik.errors.StartRange  || formik.errors.EndRange}</div> : null}
-                                    </div>
+                                    </div> */}
                                     
                                     <div className="col-md-4 col-12">
                                         <label className="d-flex align-items-center fs-6 fw-bold mb-2">
                                             <span className="required"> Upload Image </span>
                                         </label>
-                                        <span className='btn btn-light form-control' onClick={openImageModal} ><i className='fa fa-upload'></i>{`${ImageBlobs.length == 0 ? "Upload Venue Images" : ImageBlobs.length + " Images Upload"}`}</span>
+                                        <span className='btn btn-light form-control' onClick={openImageModal} ><i className='fa fa-upload'></i>{`${ImageBlobs.length == 0 ? "Upload Images" : ImageBlobs.length + " Images Upload"}`}</span>
                                     </div>
                                 </div>
                                 <div className="row mb-5">
@@ -267,32 +269,27 @@ const AddServiceModal = (props) => {
                                             <span className="required"> City </span>
                                         </label>
                                         <CustomSelect
-                                            options={cities.map(c => ({
-                                                label : c.Name,
-                                                value : c.ID
-                                            }))}
-                                            classNamePrefix="custom-select"
-                                            value={formik.values.City}
-                                            onChange={value => formik.setFieldValue('City', value.value)}
+                                            options         = { cities.map(c => ({ label : c.Name, value : c.Name }))}
+                                            classNamePrefix = "custom-select"
+                                            value           = { formik.values.City}
+                                            onChange        = { value => formik.setFieldValue('City', value.value)}
                                         />
-                                        {(formik.touched.City && formik.errors.City) ? <div className="error">{formik.errors.City}</div> : null}
-                                        
+                                        {(formik.touched.City && formik.errors.City) ? <div className="error">{formik.errors.City}</div> : null}                                        
                                     </div>
                                     <div className="col-md-6 col-12">
                                         <label className="d-flex align-items-center fs-6 fw-bold mb-2">
                                             <span className="required"> Locality </span>
                                         </label>
                                         <input 
-                                            type="text" 
-                                            name="Locality"            
-                                            value={formik.values.Locality}
-                                            onChange={formik.handleChange}
-                                            onBlur={formik.handleBlur}                
-                                            className={`form-control ${(formik.touched.Locality && formik.errors.Locality) && 'is-invalid' }`}
+                                            type     = "text" 
+                                            name     = "Locality"            
+                                            value    = { formik.values.Locality}
+                                            onChange = { formik.handleChange}
+                                            onBlur   = { formik.handleBlur}                
+                                            className= {`form-control ${(formik.touched.Locality && formik.errors.Locality) && 'is-invalid' }`}
                                         />
                                         {(formik.touched.Locality && formik.errors.Locality) ? <div className="error">{formik.errors.Locality}</div> : null}
-                                    </div>
-                                   
+                                    </div>                                   
                                 </div>
                                 <div className="row mb-5">
                                     <div className="col">

@@ -1,26 +1,20 @@
 import React, { useEffect, useState }  from 'react'
-import { NavLink, useParams } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import noresult from "../../Assets/images/addService.png";
 import { useDispatch, useSelector } from 'react-redux';
 import AddServiceModal from '../Modals/AddServiceModal';
 import { getService, deactivateService, postService, updateService } from "../../store/host/service-slice";  
-import venue1 from '../../Assets/images/venue1.jpg'
 import ServiceDetailModal from '../Modals/ServiceDetailModal';
 import { CustomSwiper } from '../Venues/Venues';
-
-//import { GetImage } from "../Global/Helper";
-
 
 
 const MendiArtistHost = () => {
 
     const serviceName = 'Mehndi Artist';
     const dispatch    = useDispatch();
-    const param       = useParams();
 
     const currentUser     = useSelector(state => state.authReducer.currentUser);
-    const mendiArtistList = useSelector( s => s.serviceReducer.mehndiList);
-    //const mendiArtistList = useSelector( s => s.serviceReducer.serviceList);
+    const mendiArtistList = useSelector( s => s.serviceReducer.mehndiList);   
 
     const [serviceList    , setserviceList]     = useState([]);
     const [showAddModal   , setShowModal]       = useState(false);
@@ -132,24 +126,18 @@ const MendiArtistHost = () => {
                  
                 </div>
             </div>
-            {param.tab === 'booking' ? (
-                <div>
-
-                </div>
-            ) : (
-                <div className="margin-l25 margin-r25 margin-t20 row padding-0">
+            {(  <div className="margin-l25 margin-r25 margin-t20 row padding-0">
                     { (filteredMendi.length > 0 ) ? (
                         filteredMendi.map((v, i) => (
-                            <div className="col-md-4 col-12 padding-l0 padding-r0" key={i} >
+                            <div className="col-md-3 col-12 padding-l0 padding-r0" key={i} >
                                 <div className="card me-md-6 text-left mb-4" >
                                     <div className="card-body padding-10">
                                     
-                                        <div className="overlay-wrapper bgi-no-repeat bgi-position-center bgi-size-cover  min-h-200px"
-                                        >
+                                        <div className="overlay-wrapper bgi-no-repeat bgi-position-center bgi-size-cover  min-h-200px">
                                             <CustomSwiper images={v.Images} from='service-images'/>
                                         </div>
                                           
-                                        <div className="m-0 my-4 padding-lr15">
+                                        <div className="m-0 mt-4 padding-lr15">
                                             <div className="fs-4 text-dark fw-bolder text-hover-primary text-dark lh-base title-height">
                                                 {v.Title}
                                             </div>
@@ -158,7 +146,7 @@ const MendiArtistHost = () => {
                                                 {v.Address}
                                             </div>
                                         
-                                            <div className='row' style={{ marginTop: '50px' }}>
+                                            <div className='row mt-5'>
                                                 <div className='col-sm-8'>
                                                     <div className="fs-6 fw-bolder">
                                                         <span  className="text-gray-700 text-hover-primary">
@@ -210,8 +198,7 @@ const MendiArtistHost = () => {
                     UpdateService   = {updateMendiArtist}
                 />
             )}
-
-            
+                        
             {!!editService && (
                 <AddServiceModal
                     show            = {!!editService}

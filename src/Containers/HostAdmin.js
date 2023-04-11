@@ -1,14 +1,14 @@
 import React from "react";
 import { Redirect, Route, Switch } from "react-router-dom";
 import SideMenu from "../Components/Host/sideMenu";
+import { useSelector } from "react-redux";
+import QuotePage from "../Components/Host/QuotePage";
 import Venues from "../Components/Venues/Venues";
-import { useDispatch, useSelector } from "react-redux";
 import Caterers from "../Components/Caterers/Caterers";
 import Decorators from "../Components/Decorators/Decorators";
 import Photographers from "../Components/Photographer/Photographers";
-import QuotePage from "../Components/Host/QuotePage";
-import BeauticianHost from "../Components/BeauticianPage/BeauticianHost";
 import MendiArtistHost from "../Components/MendiArtistPage/MendiArtistHost";
+import BeauticianHost from "../Components/BeauticianPage/BeauticianHost";
 import MusicianHost from "../Components/DjPage/MusicianHost";
 import HostProfile from '../Components/Host/HostProfile';
 import AboutUs from "../Components/Global/About";
@@ -16,7 +16,6 @@ import Contact from "../Components/Global/Contact";
 
 const HostAdmin = () => {
     
-	//const dispatch = useDispatch();
     const currentUser = useSelector( s => s.authReducer.currentUser );
 
     return (

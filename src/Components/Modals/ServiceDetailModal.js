@@ -15,26 +15,17 @@ const ServiceDetailModal = (props) => {
 
     const { show, selectedService, onDismissModal, pathPrefix } = props;
 
-
-    const [cityName, setCityName] = useState('');
+    // const [cityName, setCityName] = useState('');
     const [serviceData, setServiceData] = useState();
 
-
-    const fetchCity = async () => {
-        try {
-            const response = await db.collection('City').doc(selectedService.City).get();
-            if (response) setCityName(response.data());
-        } catch (err) {
-            swal.fire({
-                icon: 'error',
-                titleText: err.message
-            })
-        }
-    }
-
-    // useEffect(() => {
-    //     console.log(serviceData)
-    // }, [serviceData])
+    // const fetchCity = async () => {
+    //     try {
+    //         const response = await db.collection('City').doc(selectedService.City).get();
+    //         if (response) setCityName(response.data());
+    //     } catch (err) {
+    //         swal.fire({ icon: 'error', titleText: err.message })
+    //     }
+    // }
 
     useEffect(() => {
         const setData = async () => {
@@ -71,7 +62,7 @@ const ServiceDetailModal = (props) => {
         $('#ServiceDetailModal').on('hidden.bs.modal', function () { onDismissModal() })
         $('#ServiceDetailModal').modal('toggle');
 
-        fetchCity();
+       // fetchCity();
     }, [show]);
 
     return (
@@ -91,19 +82,17 @@ const ServiceDetailModal = (props) => {
                             </div>
                         </div>
                         {serviceData && (<>
-
                             <div className="modal-body grey-background">
                                 <div className='card'>
                                     <div className='card-body p-0'>
 
                                         <Swiper
-                                            effect={"fade"}
-                                            navigation={true}
-                                            modules={[Navigation, Autoplay, EffectFade]}
-                                            className="mySwiper"
-                                            loop={true}
-                                            autoplay={{ delay: 2000 }
-                                            }
+                                            effect     ={"fade"}
+                                            navigation ={true}
+                                            modules    ={[Navigation, Autoplay, EffectFade]}
+                                            className  ="mySwiper"
+                                            loop       ={true}
+                                            autoplay   ={{ delay: 2000 }}
                                         >
                                             {serviceData.Images.length > 0 && (
                                                 serviceData.Images.map((p, i) => (
@@ -135,7 +124,7 @@ const ServiceDetailModal = (props) => {
                                                             <span className='margin-r10'>
                                                                 <i className="las la-building"></i>{serviceData.Locality}
                                                             </span>
-                                                            <i className="las la-city"></i>{cityName.Name}
+                                                            <i className="las la-city"></i>{serviceData.City}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -153,7 +142,8 @@ const ServiceDetailModal = (props) => {
 
                                                 <div className="ms-1 mb-3 fw-bold fs-4">
                                                     <div className=''>Price Range :
-                                                        <span className='text-gray-400'>  {serviceData.StartRange} - {serviceData.EndRange} </span>
+                                                        <span className='text-gray-400'>  {serviceData.PriceRange}</span>
+                                                        {/* <span className='text-gray-400'>  {serviceData.StartRange} - {serviceData.EndRange} </span> */}
                                                     </div>
                                                 </div>
                                                 {serviceData.Overview && (
