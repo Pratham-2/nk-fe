@@ -88,12 +88,12 @@ const Header = ({ pathName }) => {
 											</>)}
 										</div>
 										<div className="menu-item menu-lg-down-accordion me-lg-1">
-											<span className="menu-link py-3" onClick={()=> pushToPath('photos')}>
+											<span className="menu-link py-3" onClick={()=> pushToPath('comingsoon')}>
 												<span className="menu-title "> Photos </span>
 											</span>
 										</div>
 										<div className="menu-item menu-lg-down-accordion me-lg-1">
-											<span className="menu-link py-3" onClick={()=> pushToPath('blogs')}>
+											<span className="menu-link py-3" onClick={()=> pushToPath('comingsoon')}>
 												<span className="menu-title "> Blogs </span>
 											</span>
 										</div>

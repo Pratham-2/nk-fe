@@ -1,16 +1,6 @@
 import React, { useEffect, useState } from "react";
 import PageHeader from "../Global/PageHeader";
 import venueBanner from "../../Assets/images/venueBanner2.jpg"
-
-import venue1 from '../../Assets/images/venue1.jpg'
-import venue2 from '../../Assets/images/venue2.jpg'
-import venue3 from '../../Assets/images/venue3.jpg'
-
-// import facebook from '../../Assets/images/facebook.png'
-// import instagram from '../../Assets/images/instagram.png'
-// import twitter from '../../Assets/images/twitter.png'
-import userImg from '../../Assets/images/user.png'
-
 import EnquiryModal from "../Modals/EnquiyModal";
 import BookingModal from "../Modals/BookingModal";
 
@@ -26,17 +16,16 @@ import TopLink from "../Global/TopLink";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUsersLine, faIndianRupeeSign, faUser, faLocationDot, faBowlRice, faHouse, faBoltLightning, faDrumstickBite, faLeaf } from "@fortawesome/free-solid-svg-icons"
 
-
 const ServicePage = () => {
 
-    const history = useHistory();
-    const match = useRouteMatch().params;
-    const dispatch = useDispatch();
+    const history   = useHistory();
+    const match     = useRouteMatch().params;
+    const dispatch  = useDispatch();
 
     const showBookingModal = useSelector(s => s.uiReducer.showBookingModal);
     const showEnquiryModal = useSelector(s => s.uiReducer.showEnquiryModal);
-    const isLoading = useSelector(s => s.uiReducer.isLoading);
-    const services = useSelector(s => s.searchReducer.services);
+    const isLoading        = useSelector(s => s.uiReducer.isLoading);
+    const services         = useSelector(s => s.searchReducer.services);
 
     const [serviceData, setServiceData] = useState(null)
     const [serviceLink, setServiceLink] = useState('');
@@ -61,7 +50,8 @@ const ServicePage = () => {
                 const response = await getServiceByID(serviceExist.label, venueId);
                 if (!response) return history.push('/');
 
-                response.PriceRange = `${response.StartRange} ${response.EndRange ? ' - ' + response.EndRange : '' }`;
+                //response.PriceRange = `${response.StartRange} ${response.EndRange ? ' - ' + response.EndRange : '' }`;
+
                 if (response.MaxCapacity && response.MinCapacity) response.TotalCapacity = `${response.MinCapacity} - ${response.MaxCapacity}`
                 setServiceData(response);
                 dispatch(uiActions.toggleLoading(false))
@@ -75,12 +65,10 @@ const ServicePage = () => {
         }
     }, [match, services])
  
-    useEffect(() => {
-        // console.log("serviceData", serviceData);
+    useEffect(() => {    
         if (serviceData) {
             const { serviceName } = match
-            const from = (serviceName == 'venue') ? 'venues-images' : (serviceName == 'caterer') ? 'caterer-images' : (serviceName == 'photographer') ? 'photographer-images' : (serviceName == 'decorator') ? 'decorator-images' : 'service-images' 
-            // console.log(serviceName)
+            const from = (serviceName == 'venue') ? 'venues-images' : (serviceName == 'caterer') ? 'caterer-images' : (serviceName == 'photographer') ? 'photographer-images' : (serviceName == 'decorator') ? 'decorator-images' : 'service-images'         
             if(serviceData.Images) {
                 const getImageUrl = async (imageName) => {
                     const imageUrl = await GetImage(`${from}/${imageName}`)
@@ -259,27 +247,7 @@ const ServicePage = () => {
                                                     <span className="lead fw-bold">Details & Pricing:</span>
 
                                                 </div>
-                                                <div className="card-body d-flex flex-center flex-column p-2">
-                                                    {/* <div className="symbol symbol-65px symbol-circle mb-5">
-                                                    <img src={userImg} alt="user-image" />
-                                                </div>                        
-                                                <span className="fs-4 text-gray-800 text-hover-primary fw-bolder mb-3"> {serviceData.HostName}</span> */}
-                                                    {/* <div className="fw-bold text-gray-400 mb-6">Art Director at Seal Inc.</div>                                         */}
-                                                    {/* <div className="d-flex flex-center flex-wrap vendor-card-social-icons">
-
-                                                    <ul className="mt-4">
-                                                        <li>
-                                                            <img src={instagram} height={'30px'} alt="social_image" />
-                                                        </li>
-                                                        <li>
-                                                            <img src={twitter} height={'30px'} alt="social_image" />
-                                                        </li>
-                                                        <li>
-                                                            <img src={facebook} height={'30px'} alt="social_image" />
-                                                        </li>
-                                                    </ul>
-
-                                                </div> */}
+                                                <div className="card-body d-flex flex-center flex-column p-2">                                                  
                                                     <div className="col-sm-12" >
 
                                                         <div className="row border-bottom p-3 border-dark">
@@ -291,9 +259,7 @@ const ServicePage = () => {
                                                                 </span>
                                                             </div>
                                                         </div>
-                                                        {
-
-                                                            serviceLink == 'Photographer' &&
+                                                        { (serviceLink == 'Photographer') &&
                                                             <div className="row border-bottom p-3 border-dark">
                                                                 <div className='d-flex justify-content-between align-items-center p-0'>
                                                                     <span> <FontAwesomeIcon icon={faLocationDot} size='xl' className="text-info" />&nbsp;&nbsp;Relocation Travel
@@ -304,9 +270,8 @@ const ServicePage = () => {
                                                                 </div>
                                                             </div>
                                                         }
-                                                        {
 
-                                                            serviceLink == 'Decorators' &&
+                                                        {(serviceLink == 'Decorators') &&
                                                             <>
                                                                 <div className="row border-bottom p-3 border-dark">
                                                                     <div className='d-flex justify-content-between align-items-center p-0'>
@@ -329,24 +294,20 @@ const ServicePage = () => {
                                                             </>
                                                         }
 
-
-                                                        {
-                                                            serviceLink == 'Venues' || serviceLink == 'Caterers' ?
-                                                                (
-                                                                    <div className="row border-bottom p-3 border-dark">
-                                                                        <div className='d-flex justify-content-between align-items-center p-0'>
-                                                                            <span> <FontAwesomeIcon icon={faBowlRice} size='xl' className="" />&nbsp;Per Plate Cost
-                                                                            </span>
-                                                                            <span className="">
-                                                                                <FontAwesomeIcon icon={faIndianRupeeSign} size={'lg'} className='text-danger' /> &nbsp;{serviceData.PriceRange}
-                                                                            </span>
-                                                                        </div>
+                                                        {/* {(serviceLink == 'Venues' || serviceLink == 'Caterers') ? */}
+                                                        {(serviceLink == 'Caterers') ?
+                                                            (<div className="row border-bottom p-3 border-dark">
+                                                                    <div className='d-flex justify-content-between align-items-center p-0'>
+                                                                        <span> <FontAwesomeIcon icon={faBowlRice} size='xl' className="" /> &nbsp; Per Plate Cost </span>
+                                                                        <span className="">
+                                                                            <FontAwesomeIcon icon={faIndianRupeeSign} size={'lg'} className='text-danger' /> &nbsp;{serviceData.PricePerPlate}
+                                                                        </span>
                                                                     </div>
-                                                                )
-                                                                : null
+                                                                </div>
+                                                            ) : null
                                                         }
-                                                        {
-                                                            serviceLink == 'Caterers' &&
+
+                                                        {(serviceLink == 'Caterers') &&
                                                             <>
                                                                 <div className="row border-bottom p-3 border-dark">
                                                                     <div className='d-flex justify-content-between align-items-center p-0'>
@@ -368,59 +329,42 @@ const ServicePage = () => {
                                                                 </div>
                                                             </>
                                                         }
-                                                        {
-                                                            serviceLink == 'Venues' &&
-                                                            <>
 
+                                                        {(serviceLink == 'Venues') &&
+                                                            <>
                                                                 <div className="row border-bottom border-dark p-3">
                                                                     <div className='d-flex justify-content-between align-items-center p-0'>
                                                                         <span>
-                                                                            <FontAwesomeIcon icon={faUser}
-                                                                                className="text-info"
-                                                                                size="xl"
-                                                                            />
+                                                                            <FontAwesomeIcon icon={faUser} className="text-info" size="xl" />
                                                                             &nbsp;Min Capacity
                                                                         </span>
 
-                                                                        <span className="">
-                                                                            {serviceData.MinCapacity}</span></div>
+                                                                        <span className=""> {serviceData.MinCapacity}</span></div>
                                                                 </div>
-
 
                                                                 <div className="row border-bottom border-dark p-3">
                                                                     <div className='d-flex justify-content-between align-items-center p-0'>
                                                                         <span>
-                                                                            <FontAwesomeIcon icon={faUsersLine}
-                                                                                className="text-warning"
-                                                                                size="xl"
-                                                                            />
+                                                                            <FontAwesomeIcon icon={faUsersLine} className="text-warning" size="xl" />
                                                                             &nbsp;Max Capacity
                                                                         </span>
 
-                                                                        <span className="">
-                                                                            {serviceData.MaxCapacity}</span></div>
-
+                                                                        <span className=""> {serviceData.MaxCapacity}</span></div>
                                                                 </div>
                                                             </>
                                                         }
-
-
                                                     </div>
 
                                                 </div>
                                                 <div className="card-footer p-2 ">
                                                     <div className="row">
                                                         <div className="col">
-                                                            <span
-                                                                className="btn btn-warning btn-sm btn-hover-scale me-2"
-                                                                onClick={() => openModal('enquiry')}
-                                                            > Enquire </span>
+                                                            <span className="btn btn-warning btn-sm btn-hover-scale me-2" onClick={() => openModal('enquiry')} > Enquire </span>
                                                             {/* <span
                                                                 className="btn btn-danger btn-sm btn-hover-scale"
                                                                 onClick={() => openModal('booking')}
                                                             > Book </span> */}
                                                         </div>
-
                                                     </div>
                                                 </div>
                                             </div>

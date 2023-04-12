@@ -9,7 +9,7 @@ import Decorators from "../Components/Decorators/Decorators";
 import Photographers from "../Components/Photographer/Photographers";
 import MendiArtistHost from "../Components/MendiArtistPage/MendiArtistHost";
 import BeauticianHost from "../Components/BeauticianPage/BeauticianHost";
-import MusicianHost from "../Components/DjPage/MusicianHost";
+import MusicianHost from "../Components/MusicianPage/MusicianHost";
 import HostProfile from '../Components/Host/HostProfile';
 import AboutUs from "../Components/Global/About";
 import Contact from "../Components/Global/Contact";

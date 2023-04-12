@@ -2,62 +2,59 @@ import React, { useEffect, useState } from "react";
 import { NavLink, useRouteMatch, useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Select from 'react-select';
+
+import Loader from '../Global/Loader';
 import TopLink from "../Global/TopLink";
 import PageHeader from "../Global/PageHeader";
-import bannerImg from "../../Assets/images/caterer.jpg"
-import decorater from '../../Assets/images/decorater.jpg'
-import noresult from "../../Assets/images/noresult.png";
-import { displayError } from "../Global/Helper";
-import { getService, getServiceByLocality, getServiceByName, getServiceByNameAndCity } from "../../store/storeHelper";
 
-import moment from 'moment';
-import { getAllLocality, getLocalityByCity, getPriceFilter } from "../../store/search/search-slice";
+import bannerImg from "../../Assets/images/caterer.jpg"
+import noresult from "../../Assets/images/noresult.png";
+
+import { displayError } from "../Global/Helper";
+import { getServiceByName, getServiceByNameAndCity } from "../../store/storeHelper";
+
 import { uiActions } from "../../store/ui/ui-slice";
 import { CustomSwiper } from "../Venues/Venues";
-// import venue1 from '../../Assets/images/venue1.jpg'
-// import birthday from '../../Assets/images/birthday.jpg'
-// import { db } from "../../firebaseConfig/firebase";
-
 
 const CatererList = () => {
 
-    const history                                         = useHistory();
-    const dispatch                                        = useDispatch();
-    const match                                           = useRouteMatch().params;
-    const globalCities                                    = useSelector(s => s.searchReducer.cities);
-    const locality                                        = useSelector(s => s.searchReducer.locality);
-    const price                                           = useSelector(s => s.searchReducer.price);
-    const [featuredList, setFeaturedList]                 = useState([])
-    const [filters, setFilters]                           = useState({});
-    const [selectedLocality, setSelectedLocality]         = useState([]);
-    const [defaultLocalityValue, setDefaultLocalityValue] = useState('');
-    const [priceValue, setPriceValue]       = useState('')
+    const history   = useHistory();
+    const dispatch  = useDispatch();
+    const match     = useRouteMatch().params;
+
+    const globalCities  = useSelector(s => s.searchReducer.cities);
+    const isLoading     = useSelector(s => s.uiReducer.isLoading);
+
+    const [featuredList, setFeaturedList]  = useState([]);
+    const [selectedCity,  setSelectedCity] = useState([]);
     
     const serviceClick           = (Id) => history.push(`/caterer/${Id}`);
-    const onChangeCityFilter     = (cityId) => { history.push(`/caterers/${cityId}`); setDefaultLocalityValue('');setSelectedLocality('')}
-    const onChangeLocalityFilter = (locality) => { setSelectedLocality(locality); setDefaultLocalityValue({ value: locality, label: locality }) }
-    const onChangePriceFilter = (price) => {
-        setPriceValue({ value: price, label: `Upto ${price}` })
-    }
-
+    const onChangeCityFilter     = (cityId) => history.push(`/caterers/${cityId}`);
+    
     useEffect(() => {
         let ignore = false;
         const fetchCaterers = async () => {
             try {
                 dispatch(uiActions.toggleLoading(true))
                 const { cityId } = match;
-                dispatch(getPriceFilter('Caterers'))
-                if(cityId && globalCities.length > 0) dispatch(getLocalityByCity(match.cityId))
-                else dispatch(getAllLocality())
-                const response = await getService('Caterers',selectedLocality,cityId,null,priceValue.value)
-                if(response.length > 0) setFeaturedList(response);
-                else setFeaturedList([]);
 
-                //set city filter dd value from globalcities
-                const selectedCity = globalCities.find(c => c.value === cityId);
-                setFilters({...filters, selectedCity,selectedLocality:{value:selectedLocality,label:selectedLocality},selectedPrice:{value:price,label:`Upto ${price}`}});
+                if(cityId){
+                    const response = await getServiceByNameAndCity('Caterers', cityId);
+                 
+                    if(response.length > 0) setFeaturedList(response);
+                    else setFeaturedList([]);
+                    
+                    const selectedCity = globalCities.find(c => c.value === cityId);
+                    if(selectedCity) setSelectedCity(selectedCity);
+                }else{
+                    const response = await getServiceByName('Caterers');
+
+                    if(response.length > 0) setFeaturedList(response);
+                    else setFeaturedList([]);
+                }
+
+                setTimeout(() => dispatch(uiActions.toggleLoading(false)), 200);
                 dispatch(uiActions.toggleLoading(false))  
-
             } catch (err) {
                 displayError('error', err);
             }
@@ -65,13 +62,12 @@ const CatererList = () => {
 
         if (!ignore) fetchCaterers();
 
-        
-        return () => {
-            ignore = true
-        }
-    }, [match, globalCities, selectedLocality,priceValue])
+        return () => { ignore = true}
+    }, [match, globalCities])
 
     return (<>
+        {isLoading ? <Loader/> 
+      :(<>
         <PageHeader bannerImage={bannerImg} bannerTitle={'Caterers'} position={'bottom'}
             imageAuthor={{ title: 'Photo by nicole michalou on pexels', link: "https://www.pexels.com/photo/shallow-focus-of-food-served-on-dining-table-5774927/" }}
         />
@@ -86,32 +82,12 @@ const CatererList = () => {
                         <TopLink links={["Caterers"]} />
                         <div className="row mt-3">
                             <div className="col-3">
-                                <Select className="text-left "
-                                    value={filters.selectedCity || ''}
-                                    placeholder="City" options={globalCities}
-                                    onChange={v => onChangeCityFilter(v.value)}
+                                <Select className="text-left " 
+                                    value = {selectedCity || ''}
+                                    placeholder="City"  options = {globalCities} 
+                                    onChange={v => onChangeCityFilter(v.value) }
                                 />
-                            </div>
-                            <div className="col-3">
-                                <Select className="text-left"
-                                    value = { defaultLocalityValue }
-                                    options={locality}
-                                    onChange={v => onChangeLocalityFilter(v.value)}
-                                />
-                            </div>
-                            <div className="col-3">
-                                <Select className="text-left "
-                                    placeholder="Price"
-                                    value={priceValue} options={price}
-                                    onChange={v => onChangePriceFilter(v.value)}
-                                />
-                                </div>
-                            {/* <div className="col-3">
-                                <Select className="text-left" 
-                                    placeholder=""  options = {globalCities} 
-                                    // onChange={v => onSearchChange('city', v.value) }
-                                />
-                            </div> */}
+                            </div>   
                         </div>
                     </div>
                 </div>
@@ -163,6 +139,7 @@ const CatererList = () => {
                 </div>
             </div>
         </div>
+        </>)}
     </>);
 }
 

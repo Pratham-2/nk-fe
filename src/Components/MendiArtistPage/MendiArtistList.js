@@ -3,85 +3,72 @@ import { NavLink, useRouteMatch, useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Select from 'react-select';
 
-import PageHeader from "../Global/PageHeader";
-import bannerImg from "../../Assets/images/mehndiArtist.jpg"
-import decorater from '../../Assets/images/decorater.jpg'
-import noresult from "../../Assets/images/noresult.png";
+import Loader from '../Global/Loader';
 import TopLink from "../Global/TopLink";
-import { displayError } from "../Global/Helper";
-import { getService, getServiceByLocality, getServiceByName, getServiceByNameAndCity } from "../../store/storeHelper";
+import PageHeader from "../Global/PageHeader";
 
-import moment from 'moment';
-import { getAllLocality, getLocalityByCity, getPriceFilter } from "../../store/search/search-slice";
-import Loader from "../Global/Loader";
+import bannerImg from "../../Assets/images/mehndiArtist.jpg"
+import noresult from "../../Assets/images/noresult.png";
+
+import { displayError } from "../Global/Helper";
+import { getServiceByName, getServiceByNameAndCity } from "../../store/storeHelper";
 import { uiActions } from "../../store/ui/ui-slice";
 import { CustomSwiper } from "../Venues/Venues";
 
 
 const MendiArtistList = () => {
 
-    const history = useHistory();
-    const dispatch = useDispatch();
-    const match = useRouteMatch().params;
-    const globalCities = useSelector(s => s.searchReducer.cities);
-    const locality = useSelector(s => s.searchReducer.locality);
-    const price = useSelector(s => s.searchReducer.price);
-    const [featuredList, setFeaturedList] = useState([])
-    const [filters, setFilters] = useState({});
-    const [selectedLocality, setSelectedLocality] = useState([]);
-    const [defaultLocalityValue, setdefaultLocalityValue] = useState('');
-    const [priceValue, setPriceValue] = useState('')
-    const onChangeCityFilter = (cityId) => {
-        history.push(`/mehndi-artist/${cityId}`)
-        setdefaultLocalityValue('');
-        setSelectedLocality('');
-    }
+    const history   = useHistory();
+    const dispatch  = useDispatch();
+    const match     = useRouteMatch().params;
 
-    const serviceClick = (id) => history.push(`/mehndiArtist/${id}`);
-    const onChangeLocalityFilter = (locality) => {
-        setSelectedLocality(locality);
-        setdefaultLocalityValue({ value: locality, label: locality })
-    }
-    const onChangePriceFilter = (price) => {
-        setPriceValue({ value: price, label: `Upto ${price}` })
-    }
+    const globalCities  = useSelector(s => s.searchReducer.cities);
+    const isLoading     = useSelector(s => s.uiReducer.isLoading);
+
+    const [featuredList, setFeaturedList]  = useState([]);
+    const [selectedCity,  setSelectedCity] = useState([]);
+
+    const serviceClick       = (id) => history.push(`/mehndiArtist/${id}`);
+    const onChangeCityFilter = (cityId) => history.push(`/mehndi-artist/${cityId}`)
+      
     useEffect(() => {
         let ignore = false;
         const fetchMehendiArtists = async () => {
             try {
                 dispatch(uiActions.toggleLoading(true))
                 const { cityId } = match;
-                dispatch(getPriceFilter('Mehndi-artist'))
-                //call get venues api as per url parameters ->
-                if (cityId && globalCities.length > 0) dispatch(getLocalityByCity(match.cityId))
-                else dispatch(getAllLocality())
 
-                const response = await getService('Mehndi-artist', selectedLocality, cityId, null, priceValue.value)
-                if (response.length > 0) setFeaturedList(response);
-                else setFeaturedList([]);
+                if(cityId){
+                    const response = await getServiceByNameAndCity('Mehndi-artist', cityId);
+                 
+                    if(response.length > 0) setFeaturedList(response);
+                    else setFeaturedList([]);
+                    
+                    const selectedCity = globalCities.find(c => c.value === cityId);
+                    if(selectedCity) setSelectedCity(selectedCity);
+                }else{
+                    const response = await getServiceByName('Mehndi-artist');
 
-                //set city filter dd value from globalcities
-                const selectedCity = globalCities.find(c => c.value === cityId);
-                setFilters({ ...filters, selectedCity, selectedLocality: { value: selectedLocality, label: selectedLocality }, selectedPrice: { value: price, label: `Upto ${price}` } });
+                    if(response.length > 0) setFeaturedList(response);
+                    else setFeaturedList([]);
+                }
 
-                dispatch(uiActions.toggleLoading(false))
+                setTimeout(() => dispatch(uiActions.toggleLoading(false)), 200);
+                dispatch(uiActions.toggleLoading(false)) 
 
             } catch (err) {
                 displayError('error', err);
             }
         }
 
-
         if (!ignore) fetchMehendiArtists();
 
-        return () => {
-            ignore = true
-        }
-    }, [match, globalCities, selectedLocality,priceValue])
+        return () => {ignore = true }
+    }, [match, globalCities])
 
     return (<>
-
-
+        {isLoading ? <Loader/> 
+      :(<>
         <PageHeader bannerImage={bannerImg} bannerTitle={'Mehndi-artist'}
             imageAuthor={{ title: 'Photos by kinnari kurani on pexels', link: "https://www.pexels.com/photo/women-s-red-and-gold-dress-2857306/" }}
         />
@@ -96,32 +83,12 @@ const MendiArtistList = () => {
                         <TopLink links={["Mehndi-artist"]} />
                         <div className="row mt-3">
                             <div className="col-3">
-                                <Select className="text-left "
-                                    value={filters.selectedCity || ''}
-                                    placeholder="City" options={globalCities}
-                                    onChange={v => onChangeCityFilter(v.value)}
+                                <Select className="text-left " 
+                                    value = {selectedCity || ''}
+                                    placeholder="City"  options = {globalCities} 
+                                    onChange={v => onChangeCityFilter(v.value) }
                                 />
-                            </div>
-                            <div className="col-3">
-                                <Select className="text-left "
-
-                                    value={defaultLocalityValue} options={locality}
-                                    onChange={v => onChangeLocalityFilter(v.value)}
-                                />
-                            </div>
-                            <div className="col-3">
-                                <Select className="text-left "
-                                    placeholder="Price"
-                                    value={priceValue} options={price}
-                                    onChange={v => onChangePriceFilter(v.value)}
-                                />
-                            </div>
-                            {/* <div className="col-3">
-                                <Select className="text-left" 
-                                    placeholder=""  options = {globalCities} 
-                                    // onChange={v => onSearchChange('city', v.value) }
-                                />
-                            </div> */}
+                            </div>   
                         </div>
                     </div>
                 </div>
@@ -143,15 +110,10 @@ const MendiArtistList = () => {
                             return (
                                 <div className="col-md-4 col-12" key={f.ID} >
                                     <div className="card me-md-6 text-left mb-4 card-hover" >
-                                        <div className="card-body padding-10 ">
-                                            {/* <span className="d-block overlay mb-4" data-fslightbox="lightbox-hot-sales"> */}
+                                        <div className="card-body padding-10 ">                                        
                                             <div className="overlay-wrapper bgi-no-repeat bgi-position-center bgi-size-cover  min-h-200px">
                                                 <CustomSwiper images={f.Images} from='service-images' />
-                                            </div>
-                                            {/* <div className="overlay-layer bg-dark card-rounded bg-opacity-25">
-                                                <i className="bi bi-eye-fill fs-2x text-white"></i>
-                                            </div>				 */}
-                                            {/* </span> */}
+                                            </div>                                         
 
                                             <div className="m-0 my-4 padding-lr15 cursor-pointer" onClick={() => serviceClick(f.ID)}>
                                                 <span className="fs-4 text-dark fw-bolder text-hover-primary text-dark lh-base">
@@ -176,9 +138,8 @@ const MendiArtistList = () => {
                 </div>
             </div>
         </div>
-
+        </>)}
     </>);
-
 }
 
 export default MendiArtistList;

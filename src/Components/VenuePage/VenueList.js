@@ -3,69 +3,63 @@ import {  NavLink, useRouteMatch, useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import Select from 'react-select';
 
-import PageHeader from "../Global/PageHeader";
-import bannerVenue from "../../Assets/images/bannerVenue.jpg"
-import decorater from '../../Assets/images/decorater.jpg'
-import noresult from "../../Assets/images/noresult.png";
-import { displayError } from "../Global/Helper";
-import { getServiceByName, getServiceByNameAndCity,getServiceByLocality, getService } from "../../store/storeHelper";
-import { getAllLocality, getLocalityByCity,getPriceFilter,getStatesAndCitiesAndServices } from "../../store/search/search-slice";
-import { uiActions } from '../../store/ui/ui-slice';
 import Loader from '../Global/Loader';
 import TopLink from "../Global/TopLink";
+import PageHeader from "../Global/PageHeader";
 
-import moment from 'moment';
-import { searchActions } from "../../store/search/search-slice";
+import bannerVenue from "../../Assets/images/bannerVenue.jpg"
+import noresult from "../../Assets/images/noresult.png";
+
+import { displayError } from "../Global/Helper";
+import { getServiceByName, getServiceByNameAndCity } from "../../store/storeHelper";
+import { uiActions } from '../../store/ui/ui-slice';
 import { CustomSwiper } from "../Venues/Venues";
-
 
 const VenueList = () => {
 
-    const history 	  	                                  = useHistory();
-    const dispatch                                        = useDispatch();
-    const match                                           = useRouteMatch().params;
+    const history  = useHistory();
+    const dispatch = useDispatch();
+    const match    = useRouteMatch().params;
 
-    const globalCities                                    = useSelector(s => s.searchReducer.cities);
-    const isLoading                                       = useSelector(s => s.uiReducer.isLoading);
+    const globalCities  = useSelector(s => s.searchReducer.cities);
+    const isLoading     = useSelector(s => s.uiReducer.isLoading);
    
-    const [featuredList , setFeaturedList]                = useState([])
-    const [selectedCity, setSelectedCity]                 = useState([]);
-    
-    
-    const serviceClick                                    = (venueId) =>  history.push(`/venue/${venueId}`);
-    const onChangeCityFilter                              = (cityId)  => { history.push(`/venues/${cityId}`);}
+    const [featuredList , setFeaturedList] = useState([])
+    const [selectedCity, setSelectedCity]  = useState([]);
+
+    const serviceClick       = (venueId) =>  history.push(`/venue/${venueId}`);
+    const onChangeCityFilter = (cityId)  => { history.push(`/venues/${cityId}`);}
      
     useEffect(() => {
         let ignore = false;
         const fetchVenues = async() => {
             try {
-
                 dispatch(uiActions.toggleLoading(true))
                 const { cityId } = match;
-               
-                //call get venues api as per url parameters ->
-                // if(cityId && globalCities.length > 0) dispatch(getLocalityByCity(match.cityId))
-                // else dispatch(getAllLocality())
+             
+                if(cityId){
+                    const response = await getServiceByNameAndCity('Venues', cityId);
 
-                const response = await getServiceByNameAndCity('Venues', cityId);
-                // const response = await getService('Venues',selectedLocality,cityId,null,priceValue.value)
-                if(response.length > 0) setFeaturedList(response);
-                else setFeaturedList([]);
+                    if(response.length > 0) setFeaturedList(response);
+                    else setFeaturedList([]);
+                    
+                    const selectedCity = globalCities.find(c => c.value === cityId);
+                    if(selectedCity) setSelectedCity(selectedCity);
+                }else{
+                    const response = await getServiceByName('Venues');
+        
+                    if(response.length > 0) setFeaturedList(response);
+                    else setFeaturedList([]);
+                }
 
-                //set city filter dd value from globalcities
-                const selectedCity = globalCities.find(c => c.value === cityId);
-                if(selectedCity) setSelectedCity(selectedCity);
-            
-                dispatch(uiActions.toggleLoading(false))           
-
+                setTimeout(() => dispatch(uiActions.toggleLoading(false)) ,200);
             } catch (err) {
                 displayError('error', err);
             }
         }
        
-         if(!ignore) {
-            fetchVenues();
-        }
+         if(!ignore) fetchVenues();
+        
         return () => { 
            ignore = true 
         }
@@ -94,15 +88,7 @@ const VenueList = () => {
                                         placeholder="City"  options = {globalCities} 
                                         onChange={v => onChangeCityFilter(v.value) }
                                     />
-                                </div>
-                                <div className="col-3">
-                                    
-                                    
-                                </div>
-                                <div className="col-3">
-                               
-                                </div>
-                                
+                                </div>                                
                             </div>
                         </div>
                     </div>

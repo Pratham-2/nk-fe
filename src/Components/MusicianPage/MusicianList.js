@@ -1,52 +1,59 @@
 import React, { useEffect, useState } from "react";
 import {  NavLink, useRouteMatch, useHistory } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Select from 'react-select';
+
+import Loader from '../Global/Loader';
 import TopLink from "../Global/TopLink";
 import PageHeader from "../Global/PageHeader";
+
 import bannerImg from "../../Assets/images/dj.jpg"
-import decorater from '../../Assets/images/decorater.jpg'
 import noresult from "../../Assets/images/noresult.png";
+
 import { displayError } from "../Global/Helper";
 import { getServiceByName, getServiceByNameAndCity } from "../../store/storeHelper";
+import { uiActions } from "../../store/ui/ui-slice";
 import { CustomSwiper } from "../Venues/Venues";
 
-const DecoratorList = () => {
+
+const MusicainList = () => {
+    const history 	  	= useHistory();
+    const dispatch  = useDispatch();
+    const match         = useRouteMatch().params;
+
+    const globalCities  = useSelector(s => s.searchReducer.cities);
+    const isLoading     = useSelector(s => s.uiReducer.isLoading);
 
     const [featuredList , setFeaturedList] = useState([])
-    const history 	  	= useHistory();
-    const match         = useRouteMatch().params;
-    const globalCities  = useSelector(s => s.searchReducer.cities);
-    
-    const [filters, setFilters] = useState({});
-    
-    const onChangeCityFilter = (cityId) => {
-        history.push(`/musicians/${cityId}`)
-    }
-
-    const serviceClick  = (Id) =>  history.push(`/musician/${Id}`);
+    const [selectedCity,  setSelectedCity] = useState([]);
+        
+    const serviceClick       = (Id) =>  history.push(`/musician/${Id}`);
+    const onChangeCityFilter = (cityId) => history.push(`/musicians/${cityId}`)
 
     useEffect(() => {
         let ignore = false;
         const fetchVenues = async() => {
             try {
+                dispatch(uiActions.toggleLoading(true))
                 const { cityId } = match;
-                //call get venues api as per url parameters ->
-                if(cityId && globalCities.length > 0){
-                    
-                    const response = await getServiceByNameAndCity('Dj', cityId);
+
+                if(cityId){
+                    const response = await getServiceByNameAndCity('Musicians', cityId);
+                 
                     if(response.length > 0) setFeaturedList(response);
                     else setFeaturedList([]);
-
-                    //set city filter dd value from globalcities
+                    
                     const selectedCity = globalCities.find(c => c.value === cityId);
-                    setFilters({...filters, selectedCity});               
+                    if(selectedCity) setSelectedCity(selectedCity);
                 }else{
-                    // sort as per city -> 
-                    const response = await getServiceByName('Dj');
+                    const response = await getServiceByName('Musicians');
+
                     if(response.length > 0) setFeaturedList(response);
+                    else setFeaturedList([]);
                 }
 
+                setTimeout(() => dispatch(uiActions.toggleLoading(false)), 200);
+                dispatch(uiActions.toggleLoading(false)) 
             } catch (err) {
                 displayError('error', err);
             }
@@ -58,6 +65,8 @@ const DecoratorList = () => {
     },[match, globalCities])
     
 	return (<>
+        {isLoading ? <Loader/> 
+      :(<>
         <PageHeader bannerImage= { bannerImg } bannerTitle ={'Musician'}
             imageAuthor = {{ title: 'Photos by francesco paggiaro on pexels', link: "https://www.pexels.com/photo/shallow-focus-of-food-served-on-dining-table-5774927/" }}
         />
@@ -68,28 +77,16 @@ const DecoratorList = () => {
                 {/* Search Filter Bar */}
                 <div className="card">
                     <div className="card-body">
-
                         <TopLink links={["Musicians"]} />
+
                         <div className="row mt-3">
                             <div className="col-3">
                                 <Select className="text-left " 
-                                    value = {filters.selectedCity || ''}
+                                    value = {selectedCity || ''}
                                     placeholder="City"  options = {globalCities} 
                                     onChange={v => onChangeCityFilter(v.value) }
                                 />
-                            </div>
-                            <div className="col-3">
-                                <Select className="text-left " 
-                                    placeholder="Locality"  options = {globalCities} 
-                                    // onChange={v => onSearchChange('city', v.value) }
-                                />
-                            </div>
-                            {/* <div className="col-3">
-                                <Select className="text-left" 
-                                    placeholder=""  options = {globalCities} 
-                                    // onChange={v => onSearchChange('city', v.value) }
-                                />
-                            </div> */}
+                            </div>  
                         </div>
                     </div>
                 </div>
@@ -144,7 +141,8 @@ const DecoratorList = () => {
 				</div>			
             </div>
         </div> 
+        </>)}
     </>);
 }
 
-export default DecoratorList;
+export default MusicainList;
