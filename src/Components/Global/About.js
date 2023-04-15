@@ -1,7 +1,7 @@
 import React, { useLayoutEffect } from "react";
 import {scrolltoTop} from "../Global/Helper";
 //import banner from "../../Assets/images/es-banner.png"
-import banner from "../../Assets/logos/main_banner.png"
+import banner from "../../Assets/logos/aboutBanner.png"
 import supplierImg from '../../Assets/images/supplier.png'; 
 import decorateImg from '../../Assets/images/decorate.png'; 
 import calendar from '../../Assets/images/calendar.png';
@@ -36,8 +36,7 @@ const AboutUs = () => {
                                     <h3 className="fs-2hx text-dark mb-5">About Us</h3>
                                 
                                     <div className="fs-5 text-muted fw-bold">
-                                        Within the last 10 years, we have sold over 100,000 admin theme copies that have been
-                                        <br /> successfully deployed by small businesses to global enterprises
+                                        Bringing Your Dream Event to Life - The Perfect Venue, Catering, and Decor for Your Special Day.                                      
                                     </div>
                                     
                                 </div>

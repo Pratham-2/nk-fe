@@ -196,6 +196,7 @@ export const resetPassword =  (params) => {
         try {
 
             await fire.auth().sendPasswordResetEmail(params.Email, { url:'http://localhost:3000' });
+            StopProcessing(document.getElementById('resetBtn'));
             
             swal.fire({
                 imageUrl:resetEmail,
@@ -208,6 +209,7 @@ export const resetPassword =  (params) => {
 
             //$('#forgot-modal').modal('toggle'); 
         } catch (err) {
+            StopProcessing(  document.getElementById('resetBtn'));
             switch (err.code) {
                 case "auth/user-not-found":
                     swal.fire({

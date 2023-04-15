@@ -19,6 +19,12 @@ const Signup = () =>{
     
     const globalServices = useSelector(s => s.searchReducer.services);
     const globalCities   = useSelector(s => s.searchReducer.cities);
+    const currentUser    = useSelector(s => s.authReducer.currentUser);
+    
+
+    useEffect(() => {   
+        if(!!currentUser) history.push("/");
+    },[currentUser])
 
     const pushToPath = (path) => {
 		if(!!path)

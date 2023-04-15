@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { authActions, postLogin } from "../../store/auth/auth-slice";
 import { useFormik } from "formik";
@@ -14,7 +14,9 @@ const Login = () =>{
     const dispatch     = useDispatch();
 
     const showPassword =  useSelector( s => s.authReducer.showPassword);
-    // const loginData    = useSelector( s => s.authReducer.loginData );
+    const currentUser  = useSelector(s => s.authReducer.currentUser);
+
+    // const loginData = useSelector( s => s.authReducer.loginData );
 
     // const openModal = (modal) => {
     //     $('#login-modal').modal('toggle');
@@ -39,7 +41,12 @@ const Login = () =>{
         }
     });
 
-    const setShowPassword = () => dispatch(authActions.showPassword()); 
+    const setShowPassword = () => dispatch(authActions.showPassword());
+    
+
+    useEffect(() => {   
+        if(!!currentUser) history.push("/");
+    },[currentUser])
 
     return(<>
         <div className="d-flex flex-column flex-column-fluid p-10 pt-0 pb-lg-20">

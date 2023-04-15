@@ -148,8 +148,9 @@ const FeaturedSection = (props) => {
 
 export const QuestionSection = () => {
 
-	const history = useHistory();
-	const dispatch = useDispatch();
+	const history     = useHistory();
+	const currentUser =  useSelector(s => s.authReducer.currentUser);
+	//const dispatch = useDispatch();
 
 	const scrollToSearch = () => {
 		const currentPath = window.location.pathname;
@@ -159,8 +160,10 @@ export const QuestionSection = () => {
 		if (element) element.scrollIntoView({ behavior: "smooth", block: "end", inline: "nearest" })
 	}
 
-	const openModal = () => dispatch(authActions.showModal('Login'));
+	//const openModal = () => dispatch(authActions.showModal('Login'));
 
+	const onRedirect = (path) => (path && !currentUser) ? history.push(`/${path}`): history.push('/');
+	
 	return (<>
 		<div className="card">
 			<div className="card-body p-lg-17 padding-b5">
@@ -194,7 +197,7 @@ export const QuestionSection = () => {
 									List your Business and Services
 								</div>
 
-								<span className="btn btn-bg-light btn-active-color-warning" onClick={openModal}> Add Your Listing </span>
+								<span className="btn btn-bg-light btn-active-color-warning" onClick={() => onRedirect("signup")}> Add Your Listing </span>
 							</div>
 						</div>
 

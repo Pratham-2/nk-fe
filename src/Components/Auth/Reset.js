@@ -1,5 +1,5 @@
-import React from "react";
-import { useDispatch } from "react-redux";
+import React, {useEffect} from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { authActions, resetPassword } from "../../store/auth/auth-slice";
 import { useFormik } from "formik";
 import  { ForgotValidation }  from '../Global/ValidationHelper';
@@ -11,6 +11,8 @@ import logo from "../../Assets/logos/logo_svg.svg";
 const Reset = () => {
     const history 	= useHistory()
     const dispatch  = useDispatch();
+    
+    const currentUser    = useSelector(s => s.authReducer.currentUser);
 
     const pushToPath = (path) => {
 		if(!!path)
@@ -23,11 +25,16 @@ const Reset = () => {
         initialValues: { Email:'', Password:''},
         validate: ForgotValidation,
         onSubmit: (values) => {
-            const btn = document.getElementById('submit-btn');
+            const btn = document.getElementById('resetBtn');
             StartProcessing(btn)
             dispatch( resetPassword( values ) ) //Forgot Action Creator 
         }
     });
+
+
+    useEffect(() => {   
+        if(!!currentUser) history.push("/");
+    },[currentUser])
 
     return(<>
         <div className="d-flex flex-column flex-column-fluid p-10 pt-0 pb-lg-20">
@@ -64,7 +71,7 @@ const Reset = () => {
                     </div>
                     <div className="row mt-5">
                         <div className="col">
-                            <button type="submit" id='submit-btn' className="btn btn-primary btn-sm "> Reset </button>
+                            <button type="submit" id="resetBtn" className="btn btn-primary btn-sm "> Reset </button>
                         </div>
                     </div>
                 </form>

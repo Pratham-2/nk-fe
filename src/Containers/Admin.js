@@ -66,7 +66,8 @@ const Admin = () => {
 		<>
 			<div id='kt_wrapper' className={`d-flex flex-column flex-row-fluid wrapper ${!pathName.includes('/host') && 'padding-l0'}`}>			
 				{!authRoute.includes(pathName) && ( <Header pathName={pathName} /> )}
-					<Switch>					
+					<Switch>
+						
 						<Route path ='/reset'>
 							<Reset />
 						</Route>
@@ -78,7 +79,7 @@ const Admin = () => {
 						<Route path ='/login'>
 							<Login/>
 						</Route>
-
+													
 						<Route path='/host'>
 							<HostAdmin/>
 						</Route>
