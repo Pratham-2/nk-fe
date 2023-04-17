@@ -22,7 +22,7 @@ const Footer = ({ pathName }) => {
 									At NK Mangalam we provide new idea to plan a event to help people 
 									find the best event suppliers, because you should enjoy every moment.
 								</p>
-								<span className="btn btn-outline btn-outline-dashed btn-outline-primary btn-active-light-primary mt-5"
+								<span className="btn btn-outline btn-outline-dashed btn-outline-primary btn-active-light-primary mt-5 mb-2"
 									onClick={scrollToSearch}
 								>
 									Find a Vendor

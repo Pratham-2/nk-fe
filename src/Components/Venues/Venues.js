@@ -19,8 +19,7 @@ export const CustomSwiper = (props) => {
     useEffect(() => {
         if (props.images) {
             dispatch(venueActions.setLoading(true))
-            const getImageUrl = async (path) => {
-                // const imageUrl = await GetImage(`${props.from == 'venueDetails' ? 'venues-images' : props.from == 'decoratorDetails' ? 'decorator-images' : props.from == 'photographerDetails' ? 'photographer-images' : 'caterer-images'}/${path}`);
+            const getImageUrl = async (path) => {             
                 const imageUrl = await GetImage(`${props.from}/${path}`);
                 setVenueBlobs(d => [...d, imageUrl]);
             }
@@ -39,9 +38,7 @@ export const CustomSwiper = (props) => {
                 modules={[Navigation, Autoplay, EffectFade]}
                 className="mySwiper"
                 loop={true}
-                autoplay={{
-                    delay: 2000
-                }}
+                autoplay={{ delay: 2000 }}
             >
                 {venueBlobs.length > 0 && (
                     venueBlobs.map((v, i) => (

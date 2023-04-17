@@ -53,7 +53,7 @@ export const onPostContact = (params) => {
             swal.fire({
                 icon              : 'success',
                 title             : 'Feedback Sent ..!',
-                text              : 'Our allies will contact you shortly.',
+                text              : 'Our executive will contact you shortly.',
                 showConfirmButton : false,
                 timer              : 1800
             });

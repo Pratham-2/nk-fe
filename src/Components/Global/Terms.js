@@ -1,6 +1,8 @@
-import React from 'react'
+import React,{ useLayoutEffect} from 'react'
+import { scrolltoTop } from './Helper'
 
 const Terms = () => {
+    useLayoutEffect(() => scrolltoTop() ,[]);
 
     return(<>
         <div className="content d-flex flex-column flex-column-fluid" id="kt_content">

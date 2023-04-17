@@ -1,17 +1,29 @@
 import React from "react";
+import { Accordion } from "react-bootstrap";
+import { useSelector } from "react-redux";
 
 
-const RightSideDrawer = () =>{
+const RightSideDrawer = (props) => {
+	
+	const { pushToPath, onToggle } = props;
+
+	const globalServices = useSelector(s => s.searchReducer.services);
+
 	return(
 		<> 
             {/* this class shows drawer -> drawer-on */}
-			<div id="kt_activities" className="bg-body drawer drawer-end " data-kt-drawer="true" data-kt-drawer-name="activities" data-kt-drawer-activate="true" data-kt-drawer-overlay="true" data-kt-drawer-width="{default:'300px', 'lg': '900px'}" data-kt-drawer-direction="end" data-kt-drawer-toggle="#kt_activities_toggle" data-kt-drawer-close="#kt_activities_close" 
-				style={{width: '900px !important'}}>
-				<div className="card shadow-none rounded-0">
-					<div className="card-header" id="kt_activities_header">
-						<h3 className="card-title fw-bolder text-dark">Activity Logs</h3>
-						<div className="card-toolbar">
-							<button type="button" className="btn btn-sm btn-icon btn-active-light-primary me-n5" id="kt_activities_close">
+			<div id="kt_activities" className="bg-body drawer drawer-end drawer-on w-150" data-kt-drawer="true" data-kt-drawer-name="activities" 
+				data-kt-drawer-activate="true" data-kt-drawer-overlay="true" 
+				data-kt-drawer-width="{default:'200px'}" 
+				data-kt-drawer-direction="end" data-kt-drawer-toggle="#kt_activities_toggle"
+				data-kt-drawer-close="#kt_activities_close" 
+				style={{width: '900px !important'}}
+			>
+				<div className="card shadow-none rounded-0 flex-grow-1">
+					<div className="card-header aside-header" id="kt_activities_header">
+						{/* <h3 className="card-title fw-bolder text-dark me-4"> Aside Menu</h3> */}
+						<div className="card-toolbar aside-toolbar mb-0">
+							<button type="button" onClick={() => onToggle(false) } className="btn btn-sm btn-icon btn-active-light-primary me-n5" id="kt_activities_close">
 								<span className="svg-icon svg-icon-1">
 									<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
 										<rect opacity="0.5" x="6" y="17.3137" width="16" height="2" rx="1" transform="rotate(-45 6 17.3137)" fill="black"></rect>
@@ -22,23 +34,54 @@ const RightSideDrawer = () =>{
 						</div>
 					</div>
 					
-					<div className="card-body position-relative" id="kt_activities_body">
-						<div id="kt_activities_scroll" className="position-relative scroll-y me-n5 pe-5" data-kt-scroll="true" data-kt-scroll-height="auto" data-kt-scroll-wrappers="#kt_activities_body" data-kt-scroll-dependencies="#kt_activities_header, #kt_activities_footer" data-kt-scroll-offset="5px" style={{height: "509px"}}>
+					<div className="card-body position-relative p-2" id="kt_activities_body">
+						{/* <div className="d-flex align-items-stretch" id="kt_header_nav"> */}
+						<div className="" id="kt_header_nav">														
+							<div className="header-menu align-items-stretch"  >
 							
-						</div>
-					</div>
-					
-					<div className="card-footer py-5 text-center" id="kt_activities_footer">
-						<span className="btn btn-bg-body text-primary">
-							View All Activities
-							<span className="svg-icon svg-icon-3 svg-icon-primary">
-								<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-									<rect opacity="0.5" x="18" y="13" width="13" height="2" rx="1" transform="rotate(-180 18 13)" fill="black"></rect>
-									<path d="M15.4343 12.5657L11.25 16.75C10.8358 17.1642 10.8358 17.8358 11.25 18.25C11.6642 18.6642 12.3358 18.6642 12.75 18.25L18.2929 12.7071C18.6834 12.3166 18.6834 11.6834 18.2929 11.2929L12.75 5.75C12.3358 5.33579 11.6642 5.33579 11.25 5.75C10.8358 6.16421 10.8358 6.83579 11.25 7.25L15.4343 11.4343C15.7467 11.7467 15.7467 12.2533 15.4343 12.5657Z" fill="black"></path>
-								</svg>
-							</span>
-						</span>
-					</div>	
+								<div className="menu menu-lg-rounded menu-column menu-lg-row menu-state-bg menu-title-gray-600 menu-state-title-primary menu-state-icon-primary menu-state-bullet-primary menu-arrow-gray-400 fw-bold fs-6 my-1 my-lg-0 align-items-stretch asideHeaderMenu" id="#kt_header_menu">
+									<Accordion alwaysOpen={false}  className="menu-item menu-lg-down-accordion me-lg-1">
+										<Accordion.Item class="py-3">
+											<Accordion.Header variant="light" className=""  > 											
+													<span className="menu-title "> Services </span>													
+											</Accordion.Header>
+											<Accordion.Body className="menu-sub menu-sub-lg-down-accordion menu-sub-lg-dropdown menu-rounded-0 py-lg-4 w-lg-225px">
+												{globalServices.map((s,i)=>{
+													return(
+														<div className="menu-item" key={i}>
+															<span className="menu-link user-header-link " onClick={()=> pushToPath(s.value)}>															
+																<span className="menu-title"> {s.label} </span>
+															</span>
+														</div>												
+													)
+												})}		
+											</Accordion.Body>
+										</Accordion.Item>
+									</Accordion>									
+									<div className="menu-item menu-lg-down-accordion me-lg-1">											
+										<span className="menu-link py-3" onClick={()=> pushToPath('comingsoon')}>
+											<span className="menu-title "> Photos </span>
+										</span>
+									</div>
+									<div className="menu-item menu-lg-down-accordion me-lg-1">
+										<span className="menu-link py-3" onClick={()=> pushToPath('comingsoon')}>
+											<span className="menu-title "> Blogs </span>
+										</span>
+									</div>
+									<div className="menu-item menu-lg-down-accordion me-lg-1">
+										<span className="menu-link py-3" onClick={()=> pushToPath('aboutus')}>
+											<span className="menu-title "> About </span>
+										</span>
+									</div>
+									<div className="menu-item menu-lg-down-accordion me-lg-1">
+										<span className="menu-link py-3" onClick={()=> pushToPath('contactus')}>
+											<span className="menu-title "> Contact Us </span>
+										</span>
+									</div>
+								</div>
+							</div>						
+						</div>						
+					</div>									
 				</div>
 			</div>
 		</>
@@ -46,3 +89,28 @@ const RightSideDrawer = () =>{
 }
 
 export default RightSideDrawer;
+
+
+
+
+
+{/* <div data-kt-menu-trigger="click" data-kt-menu-placement="bottom-start" className="menu-item menu-lg-down-accordion me-lg-1">
+	{globalServices && (globalServices.length > 0 ) && (<>
+		<span className="menu-link  py-3" >
+			<span className="menu-title "> Services </span>
+			<span className="menu-arrow d-lg-none"></span>
+		</span>
+		<div className="menu-sub menu-sub-lg-down-accordion menu-sub-lg-dropdown menu-rounded-0 py-lg-4 w-lg-225px" >
+			{globalServices.map((s,i)=>{
+				return(
+					<div className="menu-item" key={i}>
+						<span className="menu-link user-header-link py-3" onClick={()=> pushToPath(s.value)}>
+							<span className="menu-icon"> </span>
+							<span className="menu-title"> {s.label} </span>
+						</span>
+					</div>
+				)
+			})}													
+		</div>
+	</>)}
+</div> */}

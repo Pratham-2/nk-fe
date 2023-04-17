@@ -1,8 +1,11 @@
-import React from "react";
+import React,{ useLayoutEffect} from 'react'
+import { scrolltoTop } from './Helper'
 import commingSoon from "../../Assets/images/comingSoon.png";
 import SocialComp from "./SocialComp";
 
 const Soon = () => {
+    useLayoutEffect(() => scrolltoTop() ,[]);
+
     return(<>
         <div className="content d-flex flex-column flex-column-fluid" id="kt_content">						
             <div className="container-xxl" id="kt_content_container">                

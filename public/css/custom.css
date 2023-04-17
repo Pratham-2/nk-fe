@@ -310,15 +310,56 @@
     height: 50px;
     animation: spin 0.8s linear infinite;
 }
+.aside-header{
+    min-height: 50px !important;
+}
+
+.aside-toolbar{
+    flex-direction: column !important;
+    align-items: end !important;
+    flex-grow: 1 !important;
+}
+
+.headerservicedd .btn, .headerservicedd .show>.btn.btn-light{
+    background-color: #ffffff !important;
+}
+
+.asideHeaderMenu .accordion-button{
+    padding: 0rem !important;
+}
+
+.asideHeaderMenu .accordion-item{
+    border: none !important;
+}
+
+.asideHeaderMenu .accordion-item{
+    padding: 0.65rem 1rem;
+    outline: 0 !important;
+}
+
+.asideHeaderMenu .accordion-button:not(.collapsed) {
+    color: #207fc3;
+    background-color: #ffffff !important;
+    box-shadow: none !important;
+}
+
+.asideHeaderMenu .accordion-button span{
+    font-weight: 500 !important;
+    color: #7e8299 !important;
+    font-size: 1.075rem !important;
+}
+
+.asideHeaderMenu .menu-sub>.menu-item>.menu-link{
+    padding-left: 10px !important;
+}
+
+.asideHeaderMenu .accordion-collapse{
+    margin-top: 5px;
+}
 
 @keyframes spin {
-    0% {
-        transform: rotate(0deg);
-    }
-
-    100% {
-        transform: rotate(360deg);
-    }
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
 /* ----- 2. Header ------ */
@@ -596,6 +637,9 @@
     background-color: #207fc3 !important;
 }
 
+.user-header-link{    
+    cursor: pointer;
+}
 
 
 .btn-check:active+.btn.btn-active-light-primary .svg-icon svg [fill]:not(.permanent):not(g),
@@ -1135,6 +1179,10 @@
 
 .h-18px {
     height: 18px!important;
+}
+
+.w-150{
+    width: 150px!important;
 }
 
 @media (min-width: 992px) {

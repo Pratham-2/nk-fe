@@ -77,7 +77,7 @@ const BeauticianList = () => {
                     <div className="card-body">
                         <TopLink links={["Beauticians"]} />
                         <div className="row mt-3">
-                            <div className="col-3">
+                            <div className="col-6 ">
                                 <Select className="text-left " 
                                     value = {selectedCity || ''}
                                     placeholder="City"  options = {globalCities} 

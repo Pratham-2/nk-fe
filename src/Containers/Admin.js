@@ -2,7 +2,7 @@ import React, { useEffect, useLayoutEffect, useState } from "react";
 import { Route, Switch, useHistory, Redirect } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { auth } from "../firebaseConfig/firebaseConfig";
-import RightSideDrawer from "../Components/Global/RightSideDrawer";
+//import RightSideDrawer from "../Components/Global/RightSideDrawer";
 import Header from "../Components/Header/Header"; 
 import Search from "../Components/Global/Search";
 import Landingpage from "../Components/LandingPage/Landingpage";
@@ -145,7 +145,7 @@ const Admin = () => {
 					</Switch>
 				{!authRoute.includes(pathName) && ( <Footer pathName={pathName}/> )}				
 			</div>
-			<RightSideDrawer />
+			{/* <RightSideDrawer /> */}
         </>
 	);
 }

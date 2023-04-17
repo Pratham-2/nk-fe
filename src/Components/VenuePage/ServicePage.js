@@ -14,7 +14,14 @@ import Loader from '../Global/Loader';
 import TopLink from "../Global/TopLink";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUsersLine, faIndianRupeeSign, faUser, faLocationDot, faBowlRice, faHouse, faBoltLightning, faDrumstickBite, faLeaf } from "@fortawesome/free-solid-svg-icons"
+import { faUsersLine, faIndianRupeeSign, faUser, faLocationDot, faBowlRice, faHouse, faBoltLightning, faDrumstickBite, faLeaf } from "@fortawesome/free-solid-svg-icons";
+
+import { Swiper, SwiperSlide } from "swiper/react";
+// Import Swiper styles
+import "swiper/css";
+import 'swiper/css/lazy';
+
+import { Autoplay, EffectCoverflow, Navigation, Lazy } from "swiper";
 
 const ServicePage = () => {
 
@@ -96,7 +103,7 @@ const ServicePage = () => {
                                 <div className="card-body p-lg-13 padding-b5 padding-t20">
                                     <TopLink links={[`${serviceLink}`]} />
                                     <div className="row mt-3">
-                                        <div className="col-8">
+                                        <div className="col-md-8 col-sm-12">
                                             <div className="row ">
                                                 <div className="col-12">
                                                     <div className=" text-left mb-3">
@@ -127,28 +134,13 @@ const ServicePage = () => {
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="col-4">
+                                        <div className="col-4 d-none d-md-block">
                                             <div className="row">
                                                 <div className="col-12">
                                                     <div className="card  box-shadow-none">
                                                         <div className="card-body d-flex flex-center flex-column p-5">
-
                                                             <span className="fs-4 text-gray-800 text-hover-primary fw-bolder mb-0"> Price range : ₹ {serviceData.PriceRange} </span>
-
-                                                            {serviceData.TotalCapacity && (
-                                                                <span className="fs-7 text-gray-800 text-hover-primary fw-bolder mb-0"> No of guests : {serviceData.TotalCapacity} </span>
-                                                            )}
-
-                                                            {/* <div className="fw-bold text-gray-400 mb-6"> Subjected to requirment</div>                                         */}
-                                                            {/* <div className="row mt-3">
-                                                            <div className="col">
-                                                                <span className="btn btn-dark btn-hover-scale"
-                                                                    onClick={() => openModal('booking')}
-                                                                > 
-                                                                    Book 
-                                                                </span>
-                                                            </div>
-                                                        </div> */}
+                                                            {serviceData.TotalCapacity && ( <span className="fs-7 text-gray-800 text-hover-primary fw-bolder mb-0"> No of guests : {serviceData.TotalCapacity} </span>)}                                                           
                                                         </div>
                                                     </div>
                                                 </div>
@@ -163,40 +155,21 @@ const ServicePage = () => {
                                                     <div className="tab-content" id="myTabContent">
 
                                                         <div className="tab-pane fade show active" id="kt_tab_pane_photo" role="tabpanel">
-                                                            <div id="kt_carousel_1_carousel" className="carousel carousel-custom slide" data-bs-ride="carousel" data-bs-interval="1000">
-                                                                <div className="carousel-inner pt-8">
-                                                                    {imageBlobs.length > 0 && (
-                                                                        imageBlobs.map((p, i) => (
-                                                                            <div className="carousel-item active" key={i}>
-                                                                                <img className="h-320 card-rounded" src={p} alt="venue_image" />
-                                                                            </div>
-                                                                        ))
-                                                                    )}
-                                                                    {/* <div className="carousel-item">
-                                                                        <img className="h-320 card-rounded" src={venue2} alt="venue_image" />
-                                                                    </div>
-                                                                    <div className="carousel-item">
-                                                                        <img className="h-320 card-rounded" src={venue3} alt="venue_image" />
-                                                                    </div>
-                                                                    <div className="carousel-item">
-                                                                        <img className="h-320 card-rounded" src={venue2} alt="venue_image" />
-                                                                    </div> */}
-                                                                </div>
-                                                                <div className="mt-3">
-                                                                    <ol className="p-0 m-0 carousel-indicators carousel-indicators-dots">
-                                                                        {imageBlobs.length > 0 && (
-                                                                            imageBlobs.map((p, i) => (
-                                                                                <li key={i} data-bs-target="#kt_carousel_1_carousel" data-bs-slide-to={i} className={`ms-1 ${i == 0 && 'active'}`}></li>
-                                                                            ))
-                                                                        )}
-                                                                        {/* <li data-bs-target="#kt_carousel_1_carousel" data-bs-slide-to="1" className="ms-1"></li>
-                                                                        <li data-bs-target="#kt_carousel_1_carousel" data-bs-slide-to="2" className="ms-1"></li>
-                                                                        <li data-bs-target="#kt_carousel_1_carousel" data-bs-slide-to="3" className="ms-1"></li> */}
-                                                                    </ol>
-                                                                </div>
 
-                                                            </div>
-
+                                                            <Swiper  
+                                                                lazy={true}                                                       
+                                                                className="mySwiper" navigation={true}  loop={true} 
+                                                                autoplay={{ delay: 2000 }}
+                                                                modules={[Lazy, Navigation, Autoplay, EffectCoverflow]} 
+                                                            >
+                                                                {imageBlobs.length > 0 && (
+                                                                    imageBlobs.map((v, i) => (
+                                                                        <SwiperSlide key={i}>
+                                                                            <img className="d-block w-100 h-320 rounded-2" src={v} alt="service_img" />
+                                                                        </SwiperSlide>
+                                                                    ))
+                                                                )}
+                                                            </Swiper>                                                                                                                    
                                                         </div>
 
                                                         <div className="tab-pane fade" id="kt_tab_pane_about" role="tabpanel">
@@ -398,3 +371,25 @@ const ServicePage = () => {
 
 export default ServicePage;
 
+
+
+{/* <div id="kt_carousel_1_carousel" className="carousel carousel-custom slide" data-bs-ride="carousel" data-bs-interval="1000">
+    <div className="carousel-inner pt-8">
+        {imageBlobs.length > 0 && (
+            imageBlobs.map((p, i) => (
+                <div className="carousel-item active" key={i}>
+                    <img className="h-320 card-rounded" src={p} alt="venue_image" />
+                </div>
+            ))
+        )}                                                                 
+    </div>
+    <div className="mt-3">
+        <ol className="p-0 m-0 carousel-indicators carousel-indicators-dots">
+            {imageBlobs.length > 0 && (
+                imageBlobs.map((p, i) => (
+                    <li key={i} data-bs-target="#kt_carousel_1_carousel" data-bs-slide-to={i} className={`ms-1 ${i == 0 && 'active'}`}></li>
+                ))
+            )}           
+        </ol>
+    </div>
+</div> */}
