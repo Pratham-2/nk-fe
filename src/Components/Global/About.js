@@ -44,9 +44,9 @@ const AboutUs = () => {
                                 <div className="overlay">
                                     <img className="w-100 card-rounded h-450px" src={banner} alt="banner-img" />
                                     
-                                    <div className="overlay-layer card-rounded bg-dark bg-opacity-25">
+                                    {/* <div className="overlay-layer card-rounded bg-dark bg-opacity-25">
                                         <span className="btn btn-light-primary ms-3" onClick={openModal}> Join Us </span>
-                                    </div>                   
+                                    </div>                    */}
                                 </div>                                
                             </div>
 

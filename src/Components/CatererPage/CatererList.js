@@ -81,7 +81,7 @@ const CatererList = () => {
 
                         <TopLink links={["Caterers"]} />
                         <div className="row mt-3">
-                            <div className="col-6 ">
+                            <div className="col-6 col-md-4 ">
                                 <Select className="text-left " 
                                     value = {selectedCity || ''}
                                     placeholder="City"  options = {globalCities} 
@@ -97,10 +97,10 @@ const CatererList = () => {
                         <div className="col-12">
                             <div className="card me-md-6 text-left mb-4" >
                                 <div className="card-body padding-10 text-center" >
-                                    <img src={noresult} alt='no-result-image' height={350} />
+                                    <img src={noresult} className="img-fluid" style={{maxHeight:"250px"}} alt='no-result-image' />
                                     <h2 className="fw-bolder text-dark lh-base"> No Caterers found </h2>
                                     <NavLink to={'/'}>
-                                        <h4 className="fw-bolder text-dark lh-base" > Try another search ? </h4>
+                                        <h4 className="fw-bolder text-primary lh-base" > Try another search ? </h4>
                                     </NavLink>
                                 </div>
                             </div>

@@ -89,13 +89,14 @@ export const getAmenities = () => {
         try {
             const response = await db.collection('Amenities').doc('AmenitiesDoc').get();   
             var list = [];
-                
+            
             if(response.exists){           
                 dispatch(venueSlice.actions.setAmenities(response.data().AmenitiesList))
             } else{
                 dispatch(list)
             }
         } catch (err) {
+            console.log("error", err)
             swal.fire({
                 icon      : 'error',
                 titleText : err.message
